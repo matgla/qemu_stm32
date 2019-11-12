@@ -185,7 +185,7 @@ static void stm32_create_adc_dev(
     snprintf(child_name, sizeof(child_name), "adc[%i]", adc_num);
     object_property_add_child(stm32_container, child_name, OBJECT(adc_dev), NULL);
     stm32_init_periph(adc_dev, periph, addr, irq);
-    
+
 }
 
 static void stm32_create_rtc_dev(
@@ -203,7 +203,7 @@ static void stm32_create_rtc_dev(
     snprintf(child_name, sizeof(child_name), "rtc[%i]", rtc_num);
     object_property_add_child(stm32_container, child_name, OBJECT(rtc_dev), NULL);
     stm32_init_periph(rtc_dev, periph, addr, irq);
-    
+
 }
 
 static void stm32_create_dac_dev(
@@ -217,12 +217,12 @@ static void stm32_create_dac_dev(
     char child_name[8];
     DeviceState *dac_dev = qdev_create(NULL, "stm32-dac");
     QDEV_PROP_SET_PERIPH_T(dac_dev, "periph", periph);
-    qdev_prop_set_ptr(dac_dev, "stm32_rcc", rcc_dev);     
+    qdev_prop_set_ptr(dac_dev, "stm32_rcc", rcc_dev);
     qdev_prop_set_ptr(dac_dev, "stm32_gpio", gpio_dev);
     snprintf(child_name, sizeof(child_name), "dac");
     object_property_add_child(stm32_container, child_name, OBJECT(dac_dev), NULL);
     stm32_init_periph(dac_dev, periph, addr, irq);
-    
+
 }
 
 
@@ -331,7 +331,7 @@ void stm32_init(
     stm32_create_rtc_dev(stm32_container,STM32_RTC, 1, rcc_dev, 0x40002800,pic[STM32_RTC_IRQ]);
     stm32_create_rtc_dev(stm32_container,STM32_RTC, 1, rcc_dev, 0x40002800,pic[STM32_RTCAlarm_IRQ]);
     stm32_create_dac_dev(stm32_container,STM32_DAC, rcc_dev,gpio_dev, 0x40007400,0);
-    
+
     /* IWDG */
     DeviceState *iwdg_dev = qdev_create(NULL, "stm32_iwdg");
     qdev_prop_set_ptr(iwdg_dev, "stm32_rcc", rcc_dev);
@@ -351,4 +351,9 @@ void stm32_init(
     sysbus_connect_irq(SYS_BUS_DEVICE(dma1), 5, pic[STM32_DMA1_STREAM5_IRQ]);
     sysbus_connect_irq(SYS_BUS_DEVICE(dma1), 6, pic[STM32_DMA1_STREAM6_IRQ]);
     sysbus_connect_irq(SYS_BUS_DEVICE(dma1), 7, pic[STM32_DMA1_STREAM7_IRQ]);
+
+    /* BKP */
+    DeviceState *bkp = qdev_create(NULL, "stm32-bkp");
+    stm32_init_periph(bkp, STM32_BKP, 0x40006C00, NULL);
+
 }

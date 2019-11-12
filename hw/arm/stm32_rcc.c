@@ -565,19 +565,19 @@ static uint32_t stm32_rcc_RCC_BDCR_read(Stm32Rcc *s)
     int RTCEN_bit = clktree_is_enabled(s->PERIPHCLK[STM32_RTC]) ? 1 : 0;
     return lseon_bit << RCC_BDCR_LSERDY_BIT |
            lseon_bit << RCC_BDCR_LSEON_BIT  |
-           s->RTC_SEL << RCC_BDCR_RTCSEL_START | 
+           s->RTC_SEL << RCC_BDCR_RTCSEL_START |
            RTCEN_bit  << RCC_BDCR_RTCEN_BIT;
 }
 
 static void stm32_rcc_RCC_BDCR_write(Stm32Rcc *s, uint32_t new_value, bool init)
 {
-     clktree_set_enabled(s->LSECLK,new_value & BIT(RCC_BDCR_LSEON_BIT));    
+     clktree_set_enabled(s->LSECLK,new_value & BIT(RCC_BDCR_LSEON_BIT));
     /* select input CLOCK for RTC  */
     /* RTCSEL =(0,1,2,3) => intput CLK=(0,LSE,LSI,HSE/128)
-       see datasheet page 151*/ 
+       see datasheet page 151*/
     s->RTC_SEL=((new_value & RCC_BDCR_RTCSEL_MASK) >> RCC_BDCR_RTCSEL_START);
     clktree_set_selected_input(s->PERIPHCLK[STM32_RTC],s->RTC_SEL-1);
-    /* enable RTC CLOCK if RTCEN = 1 and RTCSEL !=0 */ 
+    /* enable RTC CLOCK if RTCEN = 1 and RTCSEL !=0 */
     if(s->RTC_SEL){
     clktree_set_enabled(s->PERIPHCLK[STM32_RTC],
                        (new_value >> RCC_BDCR_RTCEN_BIT)&0x01);
@@ -851,7 +851,7 @@ static void stm32_rcc_init_clk(Stm32Rcc *s)
 
      /* for RTCCLK */
     s->HSE_DIV128 = clktree_create_clk("HSE/128", 1, 128, true, CLKTREE_NO_MAX_FREQ, 0,
-                        s->HSECLK, NULL);    
+                        s->HSECLK, NULL);
 
     HSI_DIV2 = clktree_create_clk("HSI/2", 1, 2, true, CLKTREE_NO_MAX_FREQ, 0,
                         s->HSICLK, NULL);
@@ -909,6 +909,7 @@ static void stm32_rcc_init_clk(Stm32Rcc *s)
     s->PERIPHCLK[STM32_DAC]  = clktree_create_clk("DAC", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->PCLK1, NULL);
     s->PERIPHCLK[STM32_CRC]  = clktree_create_clk("CRC", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->HCLK, NULL);
     s->PERIPHCLK[STM32_DMA1]  = clktree_create_clk("DMA1", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->HCLK, NULL);
+    s->PERIPHCLK[STM32_BKP]  = clktree_create_clk("BKP", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->PCLK1, NULL);
 }
 
 

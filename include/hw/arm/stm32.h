@@ -211,7 +211,7 @@ const char *stm32_periph_name(stm32_periph_t periph);
 
 #define TIM5_IRQn               50     /*!< TIM5 global Interrupt                                */
 #define TIM6_DAC_IRQn           54     /*!< TIM6 and DAC underrun Interrupt                      */
-#define TIM7_IRQn               55     /*!< TIM7 Interrupt                                       */       
+#define TIM7_IRQn               55     /*!< TIM7 Interrupt                                       */
 #define STM32_ETH_WKUP_IRQ 62
 
 
@@ -390,6 +390,12 @@ typedef struct stm32_dma stm32_dma;
 #define TYPE_STM32_DMA "stm32_dma"
 #define STM32_DMA(obj) OBJECT_CHECK(stm32_dma, (obj), TYPE_STM32_DMA)
 extern qemu_irq *stm32_DMA1_irq;
+
+/* BKP */
+typedef struct Stm32Bkp Stm32Bkp;
+
+#define TYPE_STM32_BKP "stm32-bkp"
+#define STM32_BKP(obj) OBJECT_CHECK(Stm32Bkp, (obj), TYPE_STM32_BKP)
 
 
 /* STM32 MICROCONTROLLER - GENERAL */

@@ -66,6 +66,7 @@ static void stm32_f103c8_init(MachineState *machine)
     DeviceState *uart2 = DEVICE(object_resolve_path("/machine/stm32/uart[2]", NULL));
     DeviceState *uart1 = DEVICE(object_resolve_path("/machine/stm32/uart[1]", NULL));
     DeviceState *uart3 = DEVICE(object_resolve_path("/machine/stm32/uart[3]", NULL));
+
     assert(gpio_a);
     assert(gpio_c);
     assert(uart2);
@@ -85,13 +86,13 @@ static void stm32_f103c8_init(MachineState *machine)
             (Stm32Uart *)uart1,
             serial_hds[0],
             STM32_USART1_NO_REMAP);
-    
+
     /* These additional UARTs have not been tested yet... */
     stm32_uart_connect(
             (Stm32Uart *)uart2,
             serial_hds[1],
             STM32_USART2_NO_REMAP);
-    
+
     stm32_uart_connect(
             (Stm32Uart *)uart3,
             serial_hds[2],
