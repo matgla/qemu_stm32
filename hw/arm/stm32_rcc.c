@@ -264,6 +264,8 @@ struct Stm32Rcc {
     /* Properties */
     uint32_t osc_freq;
     uint32_t osc32_freq;
+    void* reset_bkp;
+    void* bkp_register;
 
     /* Private */
     MemoryRegion iomem;
@@ -586,7 +588,15 @@ static void stm32_rcc_RCC_BDCR_write(Stm32Rcc *s, uint32_t new_value, bool init)
 
     if (new_value & 0x00010000)
     {
-        // generate bkp reset;
+        if (s->reset_bkp && s->bkp_register)
+        {
+            void (*reset_bkp)(DeviceState*) = (void (*)(DeviceState*)) s->reset_bkp;
+            reset_bkp((DeviceState*)s->bkp_register);
+        }
+        else
+        {
+            hw_error("STM32 RCC: reset_bkp or bkp_register not initialized\n");
+        }
     }
 }
 
@@ -932,6 +942,8 @@ static int stm32_rcc_init(SysBusDevice *dev)
 
     stm32_rcc_init_clk(s);
 
+    s->reset_bkp = NULL;
+
     return 0;
 }
 
@@ -939,6 +951,8 @@ static int stm32_rcc_init(SysBusDevice *dev)
 static Property stm32_rcc_properties[] = {
     DEFINE_PROP_UINT32("osc_freq", Stm32Rcc, osc_freq, 0),
     DEFINE_PROP_UINT32("osc32_freq", Stm32Rcc, osc32_freq, 0),
+    DEFINE_PROP_PTR("reset_bkp", Stm32Rcc, reset_bkp),
+    DEFINE_PROP_PTR("bkp_register", Stm32Rcc, bkp_register),
     DEFINE_PROP_END_OF_LIST()
 };
 

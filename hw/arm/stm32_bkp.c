@@ -1,4 +1,5 @@
 #include "hw/arm/stm32.h"
+#include "hw/arm/stm32_bkp.h"
 #include "qemu/bitops.h"
 #include <stdio.h>
 
@@ -132,7 +133,7 @@ stm32_bkp_init(SysBusDevice* device)
     return 0;
 }
 
-static void stm32_bkp_reset(DeviceState* device_state)
+void stm32_bkp_reset(DeviceState* device_state)
 {
     Stm32Bkp* backup_device = STM32_BKP(device_state);
     DPRINTF("Resetting BKP: %d\n", backup_device->register_size);

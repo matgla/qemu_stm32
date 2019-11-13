@@ -23,6 +23,8 @@
 #include "exec/address-spaces.h"
 #include "exec/gdbstub.h"
 
+#include "hw/arm/stm32_bkp.h"
+
 /* DEFINITIONS */
 
 /* COMMON */
@@ -212,7 +214,7 @@ static void stm32_create_adc_dev(
 
 }
 
-static void stm32_create_bkp_dev(
+static DeviceState* stm32_create_bkp_dev(
     DeviceState *rcc_device
 )
 {
@@ -221,6 +223,7 @@ static void stm32_create_bkp_dev(
     qdev_prop_set_ptr(bkp, "stm32_rcc", rcc_device);
     qdev_prop_set_uint16(bkp, "stm32_bkp_register_size", 84);
     stm32_init_periph(bkp, STM32_BKP, 0x40006C00, NULL);
+    return bkp;
 }
 
 static void stm32_create_rtc_dev(
@@ -388,6 +391,8 @@ void stm32_init(
     sysbus_connect_irq(SYS_BUS_DEVICE(dma1), 7, pic[STM32_DMA1_STREAM7_IRQ]);
 
     /* BKP */
-    stm32_create_bkp_dev(rcc_dev);
+    DeviceState *bkp = stm32_create_bkp_dev(rcc_dev);
+    qdev_prop_set_ptr(rcc_dev, "reset_bkp", &stm32_bkp_reset);
+    qdev_prop_set_ptr(rcc_dev, "bkp_register", bkp);
 
 }
