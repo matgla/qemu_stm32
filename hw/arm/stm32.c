@@ -53,12 +53,20 @@ const char *stm32_periph_name_arr[] =
      "GPIOE",
      "GPIOF",
      "GPIOG",
+     "GPIOH",
+     "GPIOI",
+     "GPIOJ",
+     "GPIOK",
+     "SYSCFG",
      "AFIO",
      "UART1",
      "UART2",
      "UART3",
      "UART4",
      "UART5",
+     "UART6",
+     "UART7",
+     "UART8",
      "ADC1",
      "ADC2",
      "ADC3",
@@ -71,14 +79,21 @@ const char *stm32_periph_name_arr[] =
      "TIM6",
      "TIM7",
      "TIM8",
+     "TIM9",
+     "TIM10",
+     "TIM11",
+     "TIM12",
+     "TIM13",
+     "TIM14",
      "BKP",
      "PWR",
      "I2C1",
      "I2C2",
-     "I2S1",
+     "I2C3",
      "I2S2",
-     "IWDG"
-     "WWDG",
+     "I2S3",
+     "WWDG"
+     "IWDG",
      "CAN1",
      "CAN2",
      "CAN",
@@ -89,7 +104,16 @@ const char *stm32_periph_name_arr[] =
      "EXTI",
      "SDIO",
      "FSMC",
-     "RTC"};
+     "RTC",
+     "COMP",
+     "LCD",
+     "CRC",
+     "DMA1",
+     "DMA2",
+     "DCMI",
+     "CRYP",
+     "HASH",
+     "RNG"};
 
 const char *stm32_periph_name(stm32_periph_t periph)
 {
@@ -186,6 +210,17 @@ static void stm32_create_adc_dev(
     object_property_add_child(stm32_container, child_name, OBJECT(adc_dev), NULL);
     stm32_init_periph(adc_dev, periph, addr, irq);
 
+}
+
+static void stm32_create_bkp_dev(
+    DeviceState *rcc_device
+)
+{
+    DeviceState *bkp = qdev_create(NULL, "stm32-bkp");
+    QDEV_PROP_SET_PERIPH_T(bkp, "periph", STM32_BKP);
+    qdev_prop_set_ptr(bkp, "stm32_rcc", rcc_device);
+    qdev_prop_set_uint16(bkp, "stm32_bkp_register_size", 84);
+    stm32_init_periph(bkp, STM32_BKP, 0x40006C00, NULL);
 }
 
 static void stm32_create_rtc_dev(
@@ -353,7 +388,6 @@ void stm32_init(
     sysbus_connect_irq(SYS_BUS_DEVICE(dma1), 7, pic[STM32_DMA1_STREAM7_IRQ]);
 
     /* BKP */
-    DeviceState *bkp = qdev_create(NULL, "stm32-bkp");
-    stm32_init_periph(bkp, STM32_BKP, 0x40006C00, NULL);
+    stm32_create_bkp_dev(rcc_dev);
 
 }

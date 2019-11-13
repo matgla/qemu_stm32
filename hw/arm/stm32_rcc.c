@@ -323,10 +323,6 @@ static void stm32_rcc_periph_enable(
     clktree_set_enabled(s->PERIPHCLK[periph], new_value & BIT(bit_pos));
 }
 
-
-
-
-
 /* REGISTER IMPLEMENTATION */
 
 /* Read the configuration register. */
@@ -556,7 +552,12 @@ static void stm32_rcc_RCC_APB1ENR_write(Stm32Rcc *s, uint32_t new_value,
     stm32_rcc_periph_enable(s, new_value, init, STM32_TIM7,
                             RCC_APB1ENR_TIM7EN_BIT);
 
-    s->RCC_APB1ENR = new_value & 0x00005e7d;
+    stm32_rcc_periph_enable(s, new_value, init, STM32_PWR,
+                            RCC_APB1ENR_PWREN_BIT);
+    stm32_rcc_periph_enable(s, new_value, init, STM32_BKP,
+                            RCC_APB1ENR_BKPEN_BIT);
+
+    s->RCC_APB1ENR = new_value & 0x18005e7d;
 }
 
 static uint32_t stm32_rcc_RCC_BDCR_read(Stm32Rcc *s)
@@ -581,6 +582,11 @@ static void stm32_rcc_RCC_BDCR_write(Stm32Rcc *s, uint32_t new_value, bool init)
     if(s->RTC_SEL){
     clktree_set_enabled(s->PERIPHCLK[STM32_RTC],
                        (new_value >> RCC_BDCR_RTCEN_BIT)&0x01);
+    }
+
+    if (new_value & 0x00010000)
+    {
+        // generate bkp reset;
     }
 }
 
@@ -909,13 +915,9 @@ static void stm32_rcc_init_clk(Stm32Rcc *s)
     s->PERIPHCLK[STM32_DAC]  = clktree_create_clk("DAC", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->PCLK1, NULL);
     s->PERIPHCLK[STM32_CRC]  = clktree_create_clk("CRC", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->HCLK, NULL);
     s->PERIPHCLK[STM32_DMA1]  = clktree_create_clk("DMA1", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->HCLK, NULL);
+    s->PERIPHCLK[STM32_PWR]  = clktree_create_clk("PWR", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->PCLK1, NULL);
     s->PERIPHCLK[STM32_BKP]  = clktree_create_clk("BKP", 1, 1, false, CLKTREE_NO_MAX_FREQ, 0, s->PCLK1, NULL);
 }
-
-
-
-
-
 
 static int stm32_rcc_init(SysBusDevice *dev)
 {
