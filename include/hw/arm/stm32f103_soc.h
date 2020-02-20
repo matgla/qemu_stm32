@@ -35,7 +35,7 @@
 
 // STM32F103
 
-#define STM32F103_FLASH_BASE_ADDRESS 0x08000000 
+#define STM32F103_FLASH_BASE_ADDRESS 0x08000000
 #define STM32F103_SRAM_BASE_ADDRESS 0x20000000
 
 // STM32F103C8
@@ -45,7 +45,7 @@
     OBJECT_CHECK(STM32F103C8State, (obj), TYPE_STM32F103C8_SOC)
 
 #define STM32F103C8_NUM_USARTS 3
-#define STM32F103C8_NUM_TIMERS 7
+#define STM32F103C8_NUM_TIMERS 4
 #define STM32F103C8_NUM_ADC 2
 #define STM32F103C8_NUM_SPI 2
 
@@ -60,12 +60,13 @@ typedef struct STM32F103C8State {
     char *cpu_type;
 
     ARMv7MState armv7m;
-   
+
     STM32F2XXSyscfgState syscfg;
     STM32F2XXUsartState usart[STM32F103C8_NUM_USARTS];
-    qemu_or_irq adc_irqs;
+    qemu_or_irq *adc_irqs;
     STM32F2XXADCState adc[STM32F103C8_NUM_ADC];
     STM32F2XXSPIState spi[STM32F103C8_NUM_SPI];
+    STM32F2XXTimerState timer[STM32F103C8_NUM_TIMERS];
 
     MemoryRegion sram;
     MemoryRegion flash;
