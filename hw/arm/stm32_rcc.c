@@ -24,8 +24,11 @@
 
 #include <stdint.h>
 
-#include <stm32f1xx_soc.h>
-#include <stm32_clk.h>
+#include "hw/arm/stm32f1xx_soc.h"
+#include "hw/arm/stm32_clk.h"
+#include "hw/sysbus.h"
+#include "hw/irq.h"
+
 
 #define STM32F1XX_HSI_FREQUENCY 8000000
 #define STM32F1XX_LSI_FREQUENCY 40000
@@ -40,7 +43,7 @@
 #define STM32F1XX_HSEON_BIT          16
 #define STM32F1XX_HSICAL_START_BIT   8
 #define STM32F1XX_HSICAL_MASK        0x0000ff00
-#define STM32F1XX_HSITRIM_START_BIT  3 
+#define STM32F1XX_HSITRIM_START_BIT  3
 #define STM32F1XX_HSITRIM_MASK       0x0000f800
 #define STM32F1XX_HSIRDY_BIT         1
 #define STM32F1XX_HSION_BIT          0
@@ -48,7 +51,7 @@
 /* RCC_CFGR */
 #define STM32F1XX_MCO_START_BIT      24
 #define STM32F1XX_MCO_MASK           0x07000000
-#define STM32F1XX_USBPRE_BIT         22 
+#define STM32F1XX_USBPRE_BIT         22
 #define STM32F1XX_PLLMUL_START_BIT   18
 #define STM32F1XX_PLLMUL_MASK        0x003C0000
 #define STM32F1XX_PLLXTPRE_BIT       17
@@ -59,8 +62,8 @@
 #define STM32F1XX_PPRE2_MASK         0x00003800
 #define STM32F1XX_PPRE1_START_BIT    8
 #define STM32F1XX_PPRE1_MASK         0x00000700
-#define STM32F1XX_HPRE_START_BIT     4 
-#define STM32F1XX_HPRE_MASK          0x000000F0 
+#define STM32F1XX_HPRE_START_BIT     4
+#define STM32F1XX_HPRE_MASK          0x000000F0
 #define STM32F1XX_SWS_START_BIT      2
 #define STM32F1XX_SWS_MASK           0x0000000C
 #define STM32F1XX_SW_START_BIT       0
@@ -97,7 +100,7 @@
 #define STM32F1XX_ADC2RST_BIT        10
 #define STM32F1XX_ADC1RST_BIT        9
 #define STM32F1XX_IOPGRST_BIT        8
-#define STM32F1XX_IOPFRST_BIT        7     
+#define STM32F1XX_IOPFRST_BIT        7
 #define STM32F1XX_IOPERST_BIT        6
 #define STM32F1XX_IOPDRST_BIT        5
 #define STM32F1XX_IOPCRST_BIT        4
@@ -201,11 +204,11 @@
 #define STM32F1XX_PORRSTF_BIT        27
 #define STM32F1XX_PINRSTF_BIT        26
 #define STM32F1XX_RMVF_BIT           24
-#define STM32F1XX_LSIRDY_BIT         1      
+#define STM32F1XX_LSIRDY_BIT         1
 #define STM32F1XX_LSION_BIT          0
 
-#define GET_BIT(from, bit) (from & (1 << bit))
-#define SET_BIT(to, bit) (from | (1 << bit))
+// #define GET_BIT(from, bit) (from & (1 << bit))
+// #define SET_BIT(to, bit) (to | (1 << bit))
 
 struct Stm32F1XXRccRegisters
 {
@@ -229,14 +232,14 @@ struct Stm32F1XXRcc
 
     Stm32F1XXRccRegisters reg;
 
-    Stm32Clock hse;
-    Stm32Clock lse;
-    Stm32Clock hsi;
-    Stm32Clock lsi;
-    Stm32Clock sysclk;
-    Stm32Clock pllclk;
-    Stm32Clock mco;
-    Stm32Clock periph_clk[STM32F1XX_NUMBER_OF_PERIPHS];
+    struct Stm32Clock hse;
+    struct Stm32Clock lse;
+    struct Stm32Clock hsi;
+    struct Stm32Clock lsi;
+    struct Stm32Clock sysclk;
+    struct Stm32Clock pllclk;
+    struct Stm32Clock mco;
+    struct Stm32Clock periph_clk[STM32F1XX_NUMBER_OF_PERIPHS];
 
     qemu_irq irq;
 };
@@ -257,18 +260,18 @@ static void stm32_f1xx_rcc_registers_reset(Stm32F1XXRccRegisters* self)
 
 static void stm32_f1xx_init_clock_tree(Stm32F1XXRcc* self)
 {
-    int i = 0; 
+    int i = 0;
     for (i = 0; i < STM32F1XX_NUMBER_OF_PERIPHS; ++i)
     {
-        self->periph_clk[i] = NULL:
+        self->periph_clk[i] = NULL;
     }
 
-    // init sources HSI, LSI, HSE(4-16MHz), LSE(32768HZ) ( requires data from upper leve) 
-    
-    // create childs AHBCLK 
+    // init sources HSI, LSI, HSE(4-16MHz), LSE(32768HZ) ( requires data from upper leve)
+
+    // create childs AHBCLK
     // AHB -> APB1, APB2
     // USB
-    
+
 }
 
 static void stm32_f1xx_rcc_init(SysBusDevice *device)
@@ -317,3 +320,665 @@ static void stm32_f1xx_rcc_register_type(void)
 
 type_init(stm32_f1xx_rcc_register_type);
 
+/* STM32F10x CLOCK TREE */
+
+#define ARRAY_SIZE(arr) sizeof(arr)/sizeof(arr[0])
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_NONE {
+    .name = "DIV1",
+    .multiplier = 1,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV1_5 {
+    .name = "DIV1.5",
+    .multiplier = 2,
+    .divisor = 3
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV2 {
+    .name = "DIV2",
+    .multiplier = 1,
+    .divisor = 2
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV4 {
+    .name = "DIV4",
+    .multiplier = 1,
+    .divisor = 4
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV6 {
+    .name = "DIV6",
+    .multiplier = 1,
+    .divisor = 6
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV8 {
+    .name = "DIV8",
+    .multiplier = 1,
+    .divisor = 8
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV16 {
+    .name = "DIV16",
+    .multiplier = 1,
+    .divisor = 16
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV32 {
+    .name = "DIV32",
+    .multiplier = 1,
+    .divisor = 32
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV64 {
+    .name = "DIV64",
+    .multiplier = 1,
+    .divisor = 64
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV128 {
+    .name = "DIV128",
+    .multiplier = 1,
+    .divisor = 128
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV256 {
+    .name = "DIV256",
+    .multiplier = 1,
+    .divisor = 256
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_DIV512 {
+    .name = "DIV512",
+    .multiplier = 1,
+    .divisor = 512
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL2 {
+    .name = "MUL2",
+    .multiplier = 2,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL3 {
+    .name = "MUL3",
+    .multiplier = 3,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL4 {
+    .name = "MUL4",
+    .multiplier = 4,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL5 {
+    .name = "MUL5",
+    .multiplier = 5,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL5 {
+    .name = "MUL5",
+    .multiplier = 5,
+    .divisor = 1
+};
+
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL6 {
+    .name = "MUL6",
+    .multiplier = 6,
+    .divisor = 1
+};
+
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL7 {
+    .name = "MUL7",
+    .multiplier = 7,
+    .divisor = 1
+};
+
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL7 {
+    .name = "MUL7",
+    .multiplier = 7,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL8 {
+    .name = "MUL8",
+    .multiplier = 8,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL9 {
+    .name = "MUL9",
+    .multiplier = 9,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL10 {
+    .name = "MUL10",
+    .multiplier = 10,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL11 {
+    .name = "MUL11",
+    .multiplier = 11,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL12 {
+    .name = "MUL12",
+    .multiplier = 12,
+    .divisor = 1
+};
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL13 {
+    .name = "MUL13",
+    .multiplier = 13,
+    .divisor = 1
+};
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL14 {
+    .name = "MUL14",
+    .multiplier = 14,
+    .divisor = 1
+};
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL15 {
+    .name = "MUL15",
+    .multiplier = 15,
+    .divisor = 1
+};
+static struct Stm32Prescaler STM32F10X_PRESCALE_MUL16 {
+    .name = "MUL16",
+    .multiplier = 16,
+    .divisor = 1
+};
+
+static struct Stm32Prescaler STM32F10X_DEFAULT_PRESCALERS[] = {STM32F10X_PRESCALE_NONE};
+
+#define STM32_CLOCK_FREQUENCY_LIMIT 0xFFFFFFFFFFFFFFFF
+
+#define STM32_CLOCK_TREE_INITIALIZE_LAST(name_param) \
+    { \
+        name_param, \
+        .input_frequency = 0, \
+        .output_frequency = 0, \
+        .max_output_frequency = STM32_CLOCK_FREQUENCY_LIMIT, \
+        .number_of_outputs = 0, \
+        .outputs = NULL, \
+        .number_of_prescalers = ARRAY_SIZE(STM32F10X_DEFAULT_PRESCALERS), \
+        .prescalers = STM32F10X_DEFAULT_PRESCALERS, \
+        .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0], \
+        .enabled = false, \
+        .number_of_observers = 0 \
+    }
+
+#define STM32_CLOCK_TREE_INITIALIZE_SOURCE(name_param, output_frequency, outs) \
+    { \
+        name_param, \
+        .input_frequency = 0, \
+        output_frequency, \
+        .max_output_frequency = STM32_CLOCK_FREQUENCY_LIMIT, \
+        .number_of_outputs = sizeof(##outs)/sizeof(##outs[0]), \
+        .outputs = ##outs, \
+        .number_of_prescalers = ARRAY_SIZE(STM32F10X_DEFAULT_PRESCALERS), \
+        .prescalers = STM32F10X_DEFAULT_PRESCALERS, \
+        .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0], \
+        .enabled = false, \
+        .number_of_observers = 0 \
+    }
+
+static struct Stm32Clock STM32F10X_GPIOA_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOA");
+static struct Stm32Clock STM32F10X_GPIOB_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOB");
+static struct Stm32Clock STM32F10X_GPIOC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOC");
+static struct Stm32Clock STM32F10X_GPIOD_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOD");
+static struct Stm32Clock STM32F10X_GPIOE_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOE");
+static struct Stm32Clock STM32F10X_GPIOF_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOF");
+static struct Stm32Clock STM32F10X_GPIOG_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "GPIOG");
+static struct Stm32Clock STM32F10X_AFIO_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "AFIO");
+
+static struct Stm32Clock STM32F10X_USART1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USART1");
+static struct Stm32Clock STM32F10X_SPI1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SPI1");
+
+static struct Stm32Clock STM32F10X_TIM11_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM11");
+static struct Stm32Clock STM32F10X_TIM10_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM10");
+static struct Stm32Clock STM32F10X_TIM9_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM9");
+static struct Stm32Clock STM32F10X_TIM8_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM8");
+static struct Stm32Clock STM32F10X_TIM1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM1");
+
+static struct Stm32Clock STM32F10X_ADC3_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "ADC3");
+static struct Stm32Clock STM32F10X_ADC2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "ADC2");
+static struct Stm32Clock STM32F10X_ADC1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "ADC1");
+
+static struct Stm32Clock STM32F10X_DAC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "DAC");
+static struct Stm32Clock STM32F10X_PWR_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "PWR");
+static struct Stm32Clock STM32F10X_BKP_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "BKP");
+static struct Stm32Clock STM32F10X_CAN_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "CAN");
+
+static struct Stm32Clock STM32F10X_USBCLK_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USBCLK");
+
+static struct Stm32Clock STM32F10X_I2C2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2C2CLK");
+static struct Stm32Clock STM32F10X_I2C1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2C1CLK");
+
+static struct Stm32Clock STM32F10X_USART5_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USART5");
+static struct Stm32Clock STM32F10X_USART4_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USART4");
+static struct Stm32Clock STM32F10X_USART3_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USART3");
+static struct Stm32Clock STM32F10X_USART2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USART2");
+
+static struct Stm32Clock STM32F10X_SPI3_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SPI3");
+static struct Stm32Clock STM32F10X_SPI2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SPI2");
+static struct Stm32Clock STM32F10X_WWDG_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "WWDG");
+
+static struct Stm32Clock STM32F10X_TIM14_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM14");
+static struct Stm32Clock STM32F10X_TIM13_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM13");
+static struct Stm32Clock STM32F10X_TIM12_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM12");
+static struct Stm32Clock STM32F10X_TIM7_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM7");
+static struct Stm32Clock STM32F10X_TIM6_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM6");
+static struct Stm32Clock STM32F10X_TIM5_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM5");
+static struct Stm32Clock STM32F10X_TIM4_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM4");
+static struct Stm32Clock STM32F10X_TIM3_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM3");
+static struct Stm32Clock STM32F10X_TIM2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM2");
+
+static struct Stm32Clock STM32F10X_RTC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "RTC");
+
+static struct Stm32Prescaler STM32F10X_USB_PRESCALERS[] = {STM32F10X_PRESCALE_NONE, STM32F10X_PRESCALE_DIV1_5};
+
+static struct Stm32Clock* STM32F10X_PCLK1_OUTPUTS[] = {
+
+};
+
+static struct Stm32Clock STM32F10X_PCLK1 {
+    .name = "PCLK1",
+    .input_frequency = 0,
+    .output_frequency = 48000000,
+    .max_output_frequency = STM32_CLOCK_FREQUENCY_LIMIT,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_PCLK1_OUTPUTS),
+    .prescalers = STM32F10X_PCLK1_OUTPUTS,
+    .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_USB_PRESCALER {
+    .name = "USB_PRESCALER",
+    .input_frequency = 0,
+    .output_frequency = 48000000,
+    .max_output_frequency = 48000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_USB_PRESCALERS),
+    .prescalers = STM32F10X_USB_PRESCALERS,
+    .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_HCLK {
+    .name = "HCLK",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_DEFAULT_PRESCALERS),
+    .prescalers = STM32F10X_DEFAULT_PRESCALERS,
+    .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_SYSTIMER_PRESCALERS[] = {STM32F10X_PRESCALE_DIV8};
+
+static struct Stm32Clock STM32F10X_SYSTEM_TIMER_CLK {
+    .name = "Cortex System timer",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_SYSTIMER_PRESCALERS),
+    .prescalers = STM32F10X_SYSTIMER_PRESCALERS,
+    .selected_prescaler = &STM32F10X_SYSTIMER_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_APB_PRESCALERS[] = {
+    STM32F10X_PRESCALE_NONE,
+    STM32F10X_PRESCALE_DIV2,
+    STM32F10X_PRESCALE_DIV4,
+    STM32F10X_PRESCALE_DIV8,
+    STM32F10X_PRESCALE_DIV16
+};
+
+static struct Stm32Clock STM32F10X_APB1 {
+    .name = "APB1",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 36000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_APB_PRESCALERS),
+    .prescalers = STM32F10X_APB_PRESCALERS,
+    .selected_prescaler = &STM32F10X_APB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_TIM_PRESCALERS[] = {
+    STM32F10X_PRESCALE_NONE,
+    STM32F10X_PRESCALE_MUL2
+};
+
+static struct Stm32Clock STM32F10X_APB1_TIM {
+    .name = "APB1_TIM",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_TIM_PRESCALERS),
+    .prescalers = STM32F10X_TIM_PRESCALERS,
+    .selected_prescaler = &STM32F10X_TIM_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_APB2_TIM {
+    .name = "APB2_TIM",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_TIM_PRESCALERS),
+    .prescalers = STM32F10X_TIM_PRESCALERS,
+    .selected_prescaler = &STM32F10X_TIM_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_APB2 {
+    .name = "APB2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_APB_PRESCALERS),
+    .prescalers = STM32F10X_APB_PRESCALERS,
+    .selected_prescaler = &STM32F10X_APB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_ADC_PRESCALERS[] = {
+    STM32F10X_PRESCALE_MUL2,
+    STM32F10X_PRESCALE_MUL4,
+    STM32F10X_PRESCALE_MUL6,
+    STM32F10X_PRESCALE_MUL8
+};
+
+static struct Stm32Clock STM32F10X_ADC_PRESCALER {
+    .name = "ADC",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 14000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_ADC_PRESCALERS),
+    .prescalers = STM32F10X_ADC_PRESCALERS,
+    .selected_prescaler = &STM32F10X_ADC_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_HCLK_DIV2_PRESCALERS[] = {
+    STM32F10X_PRESCALE_DIV2
+};
+
+static struct Stm32Clock STM32F10X_HCLK_DIV2_PRESCALER {
+    .name = "HCLK/2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 36000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HCLK_DIV2_PRESCALERS),
+    .prescalers = STM32F10X_HCLK_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HCLK_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_AHB_PRESCALERS[] = {
+    STM32F10X_PRESCALE_NONE,
+    STM32F10X_PRESCALE_DIV2,
+    STM32F10X_PRESCALE_DIV4,
+    STM32F10X_PRESCALE_DIV8,
+    STM32F10X_PRESCALE_DIV16,
+    STM32F10X_PRESCALE_DIV32,
+    STM32F10X_PRESCALE_DIV64,
+    STM32F10X_PRESCALE_DIV128,
+    STM32F10X_PRESCALE_DIV256,
+    STM32F10X_PRESCALE_DIV512
+};
+
+static struct Stm32Clock* STM32F10X_AHB_OUTPUTS[] = {
+    &STM32F10X_HCLK,
+    &STM32F10X_SYSTEM_TIMER_CLK,
+    &STM32F10X_APB1,
+    &STM32F10X_APB2,
+    &STM32F10X_HCLK_DIV2_PRESCALER
+};
+
+static struct Stm32Clock STM32F10X_AHB {
+    .name = "AHB",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = ARRAY_SIZE(STM32F10X_AHB_OUTPUTS),
+    .outputs = STM32F10X_AHB_OUTPUTS,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_AHB_PRESCALERS),
+    .prescalers = STM32F10X_AHB_PRESCALERS,
+    .selected_prescaler = &STM32F10X_AHB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_PLL_PRESCALERS[] = {
+    STM32F10X_PRESCALE_MUL2,
+    STM32F10X_PRESCALE_MUL3,
+    STM32F10X_PRESCALE_MUL4,
+    STM32F10X_PRESCALE_MUL5,
+    STM32F10X_PRESCALE_MUL6,
+    STM32F10X_PRESCALE_MUL7,
+    STM32F10X_PRESCALE_MUL8,
+    STM32F10X_PRESCALE_MUL9,
+    STM32F10X_PRESCALE_MUL10,
+    STM32F10X_PRESCALE_MUL11,
+    STM32F10X_PRESCALE_MUL12,
+    STM32F10X_PRESCALE_MUL13,
+    STM32F10X_PRESCALE_MUL14,
+    STM32F10X_PRESCALE_MUL15,
+    STM32F10X_PRESCALE_MUL16
+};
+
+static struct Stm32Clock STM32F10X_PLL {
+    .name = "PLL",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_PLL_PRESCALERS),
+    .prescalers = STM32F10X_PLL_PRESCALERS,
+    .selected_prescaler = &STM32F10X_PLL_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock* STM32F10X_LSI_OUTPUTS[] {
+    &STM32F10X_RTC_CLOCK,
+    NULL // IWDG should be here
+};
+
+static struct Stm32Clock STM32F10X_LSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "LSI",
+    .output_frequency = 40000,
+    STM32F10X_LSI_OUTPUTS
+);
+
+static struct Stm32Clock* STM32F10X_LSE_OUTPUTS[] {
+    &STM32F10X_RTC_CLOCK
+};
+
+static struct Stm32Clock STM32F10X_LSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "LSE",
+    .output_frequency = 32768,
+    STM32F10X_LSE_OUTPUTS
+);
+
+
+static struct Stm32Clock* STM32F10X_HSI_OUTPUTS[] {
+    &STM32F10X_RTC_CLOCK
+};
+
+static struct Stm32Clock STM32F10X_LSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "LSE",
+    .output_frequency = 32768,
+    STM32F10X_LSE_OUTPUTS
+);
+
+static struct Stm32Clock* STM32F10X_SYSCLK_OUTPUTS[] {
+    &STM32F10X_AHB,
+    &STM32F10X_I2C1_CLOCK,
+    &STM32F10X_I2C2_CLOCK
+};
+
+static struct Stm32Clock STM32F10X_SYSCLK {
+    .name = "SYSCLK",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = ARRAY_SIZE(STM32F10X_SYSCLK_OUTPUTS),
+    .outputs = STM32F10X_SYSCLK_OUTPUTS,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_DEFAULT_PRESCALERS),
+    .prescalers = STM32F10X_DEFAULT_PRESCALERS,
+    .selected_prescaler = &STM32F10X_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_HSI_DIV2_PRESCALERS[] = {
+    STM32F10X_PRESCALE_DIV2
+};
+
+static struct Stm32Clock STM32F10X_HSI_DIV2 {
+    .name = "HSI/2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HSI_DIV2_PRESCALERS),
+    .prescalers = STM32F10X_HSI_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HSI_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_HSE_DIV2_PRESCALERS[] = {
+    STM32F10X_PRESCALE_DIV2
+};
+
+static struct Stm32Clock STM32F10X_HSE_DIV2 {
+    .name = "HSE/2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HSE_DIV2_PRESCALERS),
+    .prescalers = STM32F10X_HSE_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HSE_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Prescaler STM32F10X_HSE_DIV128_PRESCALERS[] = {
+    STM32F10X_PRESCALE_DIV128
+};
+
+static struct Stm32Clock STM32F10X_HSE_DIV128 {
+    .name = "HSE/128",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HSE_DIV128_PRESCALERS),
+    .prescalers = STM32F10X_HSE_DIV128_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HSE_DIV128_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_PLLXTPRE {
+    .name = "HSI/2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HSI_DIV2_PRESCALERS),
+    .prescalers = STM32F10X_HSI_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HSI_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock STM32F10X_MCO {
+    .name = "MCO",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F10X_HSI_DIV2_PRESCALERS),
+    .prescalers = STM32F10X_HSI_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F10X_HSI_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static struct Stm32Clock* STM32F10X_HSI_OUTPUTS[] {
+    &STM32F10X_SYSCLK,
+    &STM32F10X_HSI_DIV2,
+    &STM32F10X_MCO
+};
+
+static struct Stm32Clock STM32F10X_HSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "HSI",
+    .output_frequency = 8000000,
+    STM32F10X_HSI_OUTPUTS
+);
+
+static struct Stm32Clock* STM32F10X_HSE_OUTPUTS[] {
+    &STM32F10X_SYSCLK,
+    &STM32F10X_PLLXTPRE,
+    &STM32F10X_HSE_DIV2,
+    &STM32F10X_HSE_DIV128,
+    &STM32F10X_MCO
+};
+
+static struct Stm32Clock STM32F10X_HSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "HSE",
+    .output_frequency = 0,
+    STM32F10X_HSE_OUTPUTS
+);
