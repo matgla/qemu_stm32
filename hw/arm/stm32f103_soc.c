@@ -63,22 +63,22 @@ static void stm32f103c8_soc_initfn(Object *obj)
                               sizeof(s->usart[i]), TYPE_STM32F2XX_USART);
     }
 
-    // for (i = 0; i < STM32F103C8_NUM_TIMERS; i++) {
-    //     sysbus_init_child_obj(obj, "timer[*]", &s->timer[i],
-    //                           sizeof(s->timer[i]), TYPE_STM32F2XX_TIMER);
-    // }
+    for (i = 0; i < STM32F103C8_NUM_TIMERS; i++) {
+        sysbus_init_child_obj(obj, "timer[*]", &s->timer[i],
+                              sizeof(s->timer[i]), TYPE_STM32F2XX_TIMER);
+    }
 
-    // s->adc_irqs = OR_IRQ(object_new(TYPE_OR_IRQ));
+    s->adc_irqs = OR_IRQ(object_new(TYPE_OR_IRQ));
 
-    // for (i = 0; i < STM32F103C8_NUM_ADC; i++) {
-    //     sysbus_init_child_obj(obj, "adc[*]", &s->adc[i], sizeof(s->adc[i]),
-    //                           TYPE_STM32F2XX_ADC);
-    // }
+    for (i = 0; i < STM32F103C8_NUM_ADC; i++) {
+        sysbus_init_child_obj(obj, "adc[*]", &s->adc[i], sizeof(s->adc[i]),
+                              TYPE_STM32F2XX_ADC);
+    }
 
-    // for (i = 0; i < STM32F103C8_NUM_SPI; i++) {
-    //     sysbus_init_child_obj(obj, "spi[*]", &s->spi[i], sizeof(s->spi[i]),
-    //                           TYPE_STM32F2XX_SPI);
-    // }
+    for (i = 0; i < STM32F103C8_NUM_SPI; i++) {
+        sysbus_init_child_obj(obj, "spi[*]", &s->spi[i], sizeof(s->spi[i]),
+                              TYPE_STM32F2XX_SPI);
+    }
 }
 
 static Property stm32f103c8_soc_properties[] = {

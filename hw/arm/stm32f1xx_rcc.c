@@ -25,10 +25,16 @@
 // #include <stdint.h>
 
 #include "qemu/osdep.h" // qemu_irq
+#include "hw/arm/stm32f1xx_rcc.h"
 #include "hw/arm/stm32f1xx_soc.h"
 #include "hw/arm/stm32_clk.h"
 #include "hw/sysbus.h"
 #include "hw/irq.h"
+#include "qemu/timer.h"
+#include "qemu-common.h"
+#include "qemu/log.h"
+#include "qom/object.h"
+#include "hw/qdev-properties.h"
 
 #define STM32F1XX_HSI_FREQUENCY 8000000
 #define STM32F1XX_LSI_FREQUENCY 40000
@@ -210,7 +216,7 @@
 // // #define GET_BIT(from, bit) (from & (1 << bit))
 // // #define SET_BIT(to, bit) (to | (1 << bit))
 
-typedef struct Stm32F1XXRccRegisters
+typedef struct Stm32F1xxRccRegisters
 {
     uint32_t RCC_CR;
     uint32_t RCC_CFGR;
@@ -222,29 +228,25 @@ typedef struct Stm32F1XXRccRegisters
     uint32_t RCC_APB1ENR;
     uint32_t RCC_BDCR;
     uint32_t RCC_CSR;
-} Stm32F1XXRccRegisters;
+} Stm32F1xxRccRegisters;
 
-typedef struct Stm32F1XXRcc
+typedef struct Stm32F1xxRcc
 {
     SysBusDevice busdev;
 
     MemoryRegion iomem;
 
-    Stm32F1XXRccRegisters reg;
+    Stm32F1xxRccRegisters reg;
 
-    Stm32Clock hse;
-    Stm32Clock lse;
-    Stm32Clock hsi;
-    Stm32Clock lsi;
-    Stm32Clock sysclk;
-    Stm32Clock pllclk;
-    Stm32Clock mco;
-    Stm32Clock periph_clk[STM32F1XX_NUMBER_OF_PERIPHS];
+    Stm32Clock* hse;
+    Stm32Clock* lse;
+    Stm32Clock* hsi;
+    Stm32Clock* lsi;
 
     qemu_irq irq;
-} Stm32F1XXRcc;
+} Stm32F1xxRcc;
 
-static void stm32f1xx_rcc_registers_reset(Stm32F1XXRccRegisters *self)
+static void stm32f1xx_rcc_reset_registers(Stm32F1xxRccRegisters *self)
 {
     self->RCC_CR = 0x00000083;
     self->RCC_CFGR = 0x00000000;
@@ -258,15 +260,8 @@ static void stm32f1xx_rcc_registers_reset(Stm32F1XXRccRegisters *self)
     self->RCC_CSR = 0x0C000000;
 }
 
-static void stm32f1xx_rcc_init_clock_tree(Stm32F1XXRcc* self)
+static void stm32f1xx_rcc_init_clock_tree(Stm32F1xxRcc* self)
 {
-    int i = 0;
-    for (i = 0; i < STM32F1XX_NUMBER_OF_PERIPHS; ++i)
-    {
-        self->periph_clk[i] = NULL;
-    }
-
-    // init sources HSI, LSI, HSE(4-16MHz), LSE(32768HZ) ( requires data from upper leve)
 
     // create childs AHBCLK
     // AHB -> APB1, APB2
@@ -274,40 +269,54 @@ static void stm32f1xx_rcc_init_clock_tree(Stm32F1XXRcc* self)
 
 }
 
-static void stm32f1xx_rcc_init(SysBusDevice *device)
+static uint64_t stm32f1xx_rcc_read(void *opaque, hwaddr offset,
+                          unsigned size)
 {
-    Stm32F1XXRcc *rcc = STM32_F1XX_RCC(device);
-
-    memory_region_init_io(&rcc->iomem, OBJECT(rcc), &stm32_f1xx_operations, rcc, "stm32_f1xx_rcc", 0x3FF);
-    sysbus_init_mmio(device, &rcc->iomem);
-    sysbus_init_irq(device, &rcc->irq);
-    stm32f1xx_rcc_init_clock_tree();
+    return 0;
 }
 
-// static const MemoryRegionOps stm32_f1xx_operations = {
-//     .read = stm32_f1xx_rcc_read,
-//     .write = stm32_f1xx_rcc_write,
-//     .endianness = DEVICE_NATIVE_ENDIAN
-// };
+static void stm32f1xx_rcc_write(void *opaque, hwaddr offset,
+                       uint64_t value, unsigned size)
+{
 
-// static Property stm32_f1xx_rcc_properties[] = {
-//     DEFINE_PROP_END_OF_LIST()
-// };
+}
 
-// static void stm32_f1xx_rcc_class_init(ObjectClass *klass, void* data)
-// {
-//     DeviceClass *dc = DEVICE_CLASS(klass);
-//     SysBusDevice *sbd = SYS_BUS_DEVICE_CLASS(klass);
+static const MemoryRegionOps stm32f1xx_rcc_operations = {
+    .read = stm32f1xx_rcc_read,
+    .write = stm32f1xx_rcc_write,
+    .endianness = DEVICE_NATIVE_ENDIAN
+};
 
-//     sbd->init = stm32_f1xx_init;
-//     dc->reset = stm32_f1xx_reset;
-//     dc->props = stm32_f1xx_rcc_properties;
-// }
+static void stm32f1xx_rcc_init(Object *device)
+{
+    // Stm32F1xxRcc *rcc = STM32F1XX_RCC(device);
+
+    // memory_region_init_io(&rcc->iomem, OBJECT(rcc), &stm32f1xx_rcc_operations, rcc, "stm32f1xx-rcc", 0x3FF);
+    // sysbus_init_mmio(SYS_BUS_DEVICE(rcc), &rcc->iomem);
+    // sysbus_init_irq(SYS_BUS_DEVICE(rcc), &rcc->irq);
+    // stm32f1xx_rcc_reset_registers(&rcc->reg);
+    // stm32f1xx_rcc_init_clock_tree(rcc);
+}
+
+static void stm32f1xx_rcc_reset(DeviceState *device)
+{
+    Stm32F1xxRcc *rcc = STM32F1XX_RCC(device);
+
+    stm32f1xx_rcc_reset_registers(&rcc->reg);
+}
+
+static void stm32f1xx_rcc_class_init(ObjectClass *klass, void* data)
+{
+    DeviceClass *dc = DEVICE_CLASS(klass);
+
+    dc->reset = stm32f1xx_rcc_reset;
+}
 
 static TypeInfo stm32f1xx_rcc_info = {
-    .name = "stm32f1xx_rcc",
+    .name = TYPE_STM32F1XX_RCC,
     .parent = TYPE_SYS_BUS_DEVICE,
-    .instance_size = sizeof(Stm32F1XXRcc),
+    .instance_size = sizeof(Stm32F1xxRcc),
+    .instance_init = stm32f1xx_rcc_init,
     .class_init = stm32f1xx_rcc_class_init
 };
 
