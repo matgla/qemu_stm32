@@ -56,8 +56,8 @@ typedef struct Stm32Clock
 
     /* block */
     uint32_t number_of_prescalers;
-    Stm32Prescaler *prescalers;
-    Stm32Prescaler *selected_prescaler;
+    const Stm32Prescaler *prescalers;
+    const Stm32Prescaler *selected_prescaler;
 
     /* state */
     int enabled;

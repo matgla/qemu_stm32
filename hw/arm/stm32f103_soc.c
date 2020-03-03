@@ -30,6 +30,8 @@
 #include "hw/arm/stm32f103_soc.h"
 #include "hw/misc/unimp.h"
 
+#include "hw/arm/stm32f1xx_rcc.h"
+
 #define SYSCFG_ADD 0x40013800
 static const uint32_t usart_addr[] = {0x40011000, 0x40004400, 0x40004800,
                                       0x40004C00, 0x40005000, 0x40011400,
@@ -44,6 +46,7 @@ static const uint32_t adc_addr[] = {0x40012000, 0x40012100,
                                     0x40012200};
 
 #define SYSCFG_IRQ 71
+#define RCC_IRQ 5
 static const int usart_irq[] = {37, 38, 39};
 static const int timer_irq[] = {28, 29, 30, 50};
 #define ADC_IRQ 18
@@ -123,7 +126,7 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     memory_region_add_subregion(system_memory, STM32F103_SRAM_BASE_ADDRESS, &s->sram);
 
     armv7m = DEVICE(&s->armv7m);
-    qdev_prop_set_uint32(armv7m, "num-irq", 96);
+    qdev_prop_set_uint32(armv7m, "num-irq", 91);
     qdev_prop_set_string(armv7m, "cpu-type", s->cpu_type);
     qdev_prop_set_bit(armv7m, "enable-bitband", true);
     object_property_set_link(OBJECT(&s->armv7m), OBJECT(system_memory),
@@ -147,6 +150,16 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     busdev = SYS_BUS_DEVICE(dev);
     sysbus_mmio_map(busdev, 0, SYSCFG_ADD);
     sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, SYSCFG_IRQ));
+
+    /* RCC */
+    DeviceState *rcc_device = qdev_create(NULL, TYPE_STM32F1XX_RCC);
+    qdev_init_nofail(rcc_device);
+    fprintf(stderr, "RCC initialized\n");
+    sysbus_mmio_map(SYS_BUS_DEVICE(rcc_device), 0, 0x40021000);
+    // qdev_get_
+    // sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, RCC_IRQ));
+
+    // object_property_add_child()
 
     /* attach UART and USART */
     for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
