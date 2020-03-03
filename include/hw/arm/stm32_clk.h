@@ -29,16 +29,15 @@
 
 #define STM32_CLOCK_MAX_OBSERVERS 16
 
-struct Stm32Prescaler
+typedef struct Stm32Prescaler
 {
-    const char* name;
+    const char *name;
     uint64_t multiplier;
     uint64_t divisor;
-};
+} Stm32Prescaler;
 
-struct Stm32Clock
+typedef struct Stm32Clock
 {
-public:
     const char *name;
 
     /* parameters */
@@ -57,8 +56,8 @@ public:
 
     /* block */
     uint32_t number_of_prescalers;
-    Stm32Prescaler* prescalers;
-    Stm32Prescaler* selected_prescaler;
+    Stm32Prescaler *prescalers;
+    Stm32Prescaler *selected_prescaler;
 
     /* state */
     int enabled;

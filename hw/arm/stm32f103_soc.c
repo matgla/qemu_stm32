@@ -30,24 +30,24 @@
 #include "hw/arm/stm32f103_soc.h"
 #include "hw/misc/unimp.h"
 
-#define SYSCFG_ADD                     0x40013800
-static const uint32_t usart_addr[] = { 0x40011000, 0x40004400, 0x40004800,
-                                       0x40004C00, 0x40005000, 0x40011400,
-                                       0x40007800, 0x40007C00 };
+#define SYSCFG_ADD 0x40013800
+static const uint32_t usart_addr[] = {0x40011000, 0x40004400, 0x40004800,
+                                      0x40004C00, 0x40005000, 0x40011400,
+                                      0x40007800, 0x40007C00};
 
-static const uint32_t timer_addr[] = { 0x40000000, 0x40000400,
-                                       0x40000800, 0x40000C00 };
-#define ADC_ADDR                       0x40012000
-static const uint32_t spi_addr[] =   { 0x40013000, 0x40003800, 0x40003C00,
-                                       0x40013400, 0x40015000, 0x40015400 };
-static const uint32_t adc_addr[] = { 0x40012000, 0x40012100,
-    0x40012200 };
+static const uint32_t timer_addr[] = {0x40000000, 0x40000400,
+                                      0x40000800, 0x40000C00};
+#define ADC_ADDR 0x40012000
+static const uint32_t spi_addr[] = {0x40013000, 0x40003800, 0x40003C00,
+                                    0x40013400, 0x40015000, 0x40015400};
+static const uint32_t adc_addr[] = {0x40012000, 0x40012100,
+                                    0x40012200};
 
-#define SYSCFG_IRQ                     71
-static const int usart_irq[] = { 37, 38, 39 };
-static const int timer_irq[] = { 28, 29, 30, 50 };
+#define SYSCFG_IRQ 71
+static const int usart_irq[] = {37, 38, 39};
+static const int timer_irq[] = {28, 29, 30, 50};
 #define ADC_IRQ 18
-static const int spi_irq[] =   { 35, 36, 51, 0, 0, 0 };
+static const int spi_irq[] = {35, 36, 51, 0, 0, 0};
 
 static void stm32f103c8_soc_initfn(Object *obj)
 {
@@ -57,7 +57,8 @@ static void stm32f103c8_soc_initfn(Object *obj)
     sysbus_init_child_obj(obj, "armv7m", &s->armv7m, sizeof(s->armv7m), TYPE_ARMV7M);
     sysbus_init_child_obj(obj, "syscfg", &s->syscfg, sizeof(s->syscfg), TYPE_STM32F2XX_SYSCFG);
 
-    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i) {
+    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
+    {
         sysbus_init_child_obj(obj, "usart[*]", &s->usart[i],
                               sizeof(s->usart[i]), TYPE_STM32F2XX_USART);
     }
@@ -96,7 +97,8 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
 
     memory_region_init_ram(&s->flash, NULL, "STM32F103C8.flash", STM32F103C8_FLASH_SIZE, &err);
 
-    if (err != NULL) {
+    if (err != NULL)
+    {
         error_propagate(errp, err);
         return;
     }
@@ -113,7 +115,8 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     memory_region_init_ram(&s->sram, NULL, "STM32F103.sram", STM32F103C8_SRAM_SIZE,
                            &err);
 
-    if (err != NULL) {
+    if (err != NULL)
+    {
         error_propagate(errp, err);
         return;
     }
@@ -127,7 +130,8 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
                              "memory", &error_abort);
     object_property_set_bool(OBJECT(&s->armv7m), true, "realized", &err);
 
-    if (err != NULL) {
+    if (err != NULL)
+    {
         error_propagate(errp, err);
         return;
     }
@@ -135,7 +139,8 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     /* System configuration controller */
     dev = DEVICE(&s->syscfg);
     object_property_set_bool(OBJECT(&s->syscfg), true, "realized", &err);
-    if (err != NULL) {
+    if (err != NULL)
+    {
         error_propagate(errp, err);
         return;
     }
@@ -144,11 +149,13 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, SYSCFG_IRQ));
 
     /* attach UART and USART */
-    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i) {
+    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
+    {
         dev = DEVICE(&(s->usart[i]));
         qdev_prop_set_chr(dev, "chardev", serial_hd(i));
         object_property_set_bool(OBJECT(&s->usart[i]), true, "realized", &err);
-        if (err != NULL) {
+        if (err != NULL)
+        {
             error_propagate(errp, err);
             return;
         }
@@ -157,56 +164,63 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
         sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, usart_irq[i]));
     }
 
-    // /* Timer 2 to 5 */
-    // for (i = 0; i < STM32F103C8_NUM_TIMERS; i++) {
-    //     dev = DEVICE(&(s->timer[i]));
-    //     qdev_prop_set_uint64(dev, "clock-frequency", 1000000000);
-    //     object_property_set_bool(OBJECT(&s->timer[i]), true, "realized", &err);
-    //     if (err != NULL) {
-    //         error_propagate(errp, err);
-    //         return;
-    //     }
-    //     busdev = SYS_BUS_DEVICE(dev);
-    //     sysbus_mmio_map(busdev, 0, timer_addr[i]);
-    //     sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, timer_irq[i]));
-    // }
+    /* Timer 2 to 5 */
+    for (i = 0; i < STM32F103C8_NUM_TIMERS; i++)
+    {
+        dev = DEVICE(&(s->timer[i]));
+        qdev_prop_set_uint64(dev, "clock-frequency", 1000000000);
+        object_property_set_bool(OBJECT(&s->timer[i]), true, "realized", &err);
+        if (err != NULL)
+        {
+            error_propagate(errp, err);
+            return;
+        }
+        busdev = SYS_BUS_DEVICE(dev);
+        sysbus_mmio_map(busdev, 0, timer_addr[i]);
+        sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, timer_irq[i]));
+    }
 
-    // /* ADC 1 to 3 */
-    // object_property_set_int(OBJECT(s->adc_irqs), STM32F103C8_NUM_ADC,
-    //                         "num-lines", &err);
-    // object_property_set_bool(OBJECT(s->adc_irqs), true, "realized", &err);
-    // if (err != NULL) {
-    //     error_propagate(errp, err);
-    //     return;
-    // }
-    // qdev_connect_gpio_out(DEVICE(s->adc_irqs), 0,
-    //                       qdev_get_gpio_in(armv7m, ADC_IRQ));
+    /* ADC 1 to 3 */
+    object_property_set_int(OBJECT(s->adc_irqs), STM32F103C8_NUM_ADC,
+                            "num-lines", &err);
+    object_property_set_bool(OBJECT(s->adc_irqs), true, "realized", &err);
+    if (err != NULL)
+    {
+        error_propagate(errp, err);
+        return;
+    }
+    qdev_connect_gpio_out(DEVICE(s->adc_irqs), 0,
+                          qdev_get_gpio_in(armv7m, ADC_IRQ));
 
-    // for (i = 0; i < STM32F103C8_NUM_ADC; i++) {
-    //     dev = DEVICE(&(s->adc[i]));
-    //     object_property_set_bool(OBJECT(&s->adc[i]), true, "realized", &err);
-    //     if (err != NULL) {
-    //         error_propagate(errp, err);
-    //         return;
-    //     }
-    //     busdev = SYS_BUS_DEVICE(dev);
-    //     sysbus_mmio_map(busdev, 0, adc_addr[i]);
-    //     sysbus_connect_irq(busdev, 0,
-    //                        qdev_get_gpio_in(DEVICE(s->adc_irqs), i));
-    // }
+    for (i = 0; i < STM32F103C8_NUM_ADC; i++)
+    {
+        dev = DEVICE(&(s->adc[i]));
+        object_property_set_bool(OBJECT(&s->adc[i]), true, "realized", &err);
+        if (err != NULL)
+        {
+            error_propagate(errp, err);
+            return;
+        }
+        busdev = SYS_BUS_DEVICE(dev);
+        sysbus_mmio_map(busdev, 0, adc_addr[i]);
+        sysbus_connect_irq(busdev, 0,
+                           qdev_get_gpio_in(DEVICE(s->adc_irqs), i));
+    }
 
-    // /* SPI 1 and 2 */
-    // for (i = 0; i < STM32F103C8_NUM_SPI; i++) {
-    //     dev = DEVICE(&(s->spi[i]));
-    //     object_property_set_bool(OBJECT(&s->spi[i]), true, "realized", &err);
-    //     if (err != NULL) {
-    //         error_propagate(errp, err);
-    //         return;
-    //     }
-    //     busdev = SYS_BUS_DEVICE(dev);
-    //     sysbus_mmio_map(busdev, 0, spi_addr[i]);
-    //     sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, spi_irq[i]));
-    // }
+    /* SPI 1 and 2 */
+    for (i = 0; i < STM32F103C8_NUM_SPI; i++)
+    {
+        dev = DEVICE(&(s->spi[i]));
+        object_property_set_bool(OBJECT(&s->spi[i]), true, "realized", &err);
+        if (err != NULL)
+        {
+            error_propagate(errp, err);
+            return;
+        }
+        busdev = SYS_BUS_DEVICE(dev);
+        sysbus_mmio_map(busdev, 0, spi_addr[i]);
+        sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, spi_irq[i]));
+    }
     // create_unimplemented_device("timer[7]",    0x40001400, 0x400);
     // create_unimplemented_device("timer[12]",   0x40001800, 0x400);
     // create_unimplemented_device("timer[6]",    0x40001000, 0x400);
@@ -261,11 +275,11 @@ static void stm32f103c8_soc_class_init(ObjectClass *klass, void *data)
 }
 
 static const TypeInfo stm32f103c8_soc_info = {
-    .name          = TYPE_STM32F103C8_SOC,
-    .parent        = TYPE_SYS_BUS_DEVICE,
+    .name = TYPE_STM32F103C8_SOC,
+    .parent = TYPE_SYS_BUS_DEVICE,
     .instance_size = sizeof(STM32F103C8State),
     .instance_init = stm32f103c8_soc_initfn,
-    .class_init    = stm32f103c8_soc_class_init,
+    .class_init = stm32f103c8_soc_class_init,
 };
 
 static void stm32f103c8_soc_types(void)
@@ -274,5 +288,3 @@ static void stm32f103c8_soc_types(void)
 }
 
 type_init(stm32f103c8_soc_types);
-
-
