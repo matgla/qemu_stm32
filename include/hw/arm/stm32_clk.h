@@ -25,6 +25,8 @@
 #ifndef HW_ARM_STM32_CLOCK_H
 #define HW_ARM_STM32_CLOCK_H
 
+#include <stdint.h>
+
 #include "hw/irq.h"
 
 #define STM32_CLOCK_MAX_OBSERVERS 16
