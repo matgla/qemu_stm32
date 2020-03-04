@@ -42,6 +42,10 @@
 
 /* RCC_CR */
 #define STM32F1XX_RCC_CR_OFFSET      0x0
+#define STM32F1XX_PLL3READY_BIT      29
+#define STM32F1XX_PLL3ON_BIT         28
+#define STM32F1XX_PLL2READY_BIT      27
+#define STM32F1XX_PLL2ON_BIT         26
 #define STM32F1XX_PLLREADY_BIT       25
 #define STM32F1XX_PLLON_BIT          24
 #define STM32F1XX_CSSON_BIT          19
@@ -59,7 +63,7 @@
 #define STM32F1XX_RCC_CFGR_OFFSET    0x4
 #define STM32F1XX_MCO_START_BIT      24
 #define STM32F1XX_MCO_MASK           0x07000000
-#define STM32F1XX_USBPRE_BIT         22
+#define STM32F1XX_OTGFSPRE_BIT       22
 #define STM32F1XX_PLLMUL_START_BIT   18
 #define STM32F1XX_PLLMUL_MASK        0x003C0000
 #define STM32F1XX_PLLXTPRE_BIT       17
@@ -223,8 +227,13 @@
 #define STM32F1XX_LSIRDY_BIT         1
 #define STM32F1XX_LSION_BIT          0
 
-// // #define GET_BIT(from, bit) (from & (1 << bit))
-// // #define SET_BIT(to, bit) (to | (1 << bit))
+#define GET_BIT(from, bit) (from & (1 << bit))
+#define SET_BIT(to, bit) (to |= (1 << bit))
+#define UNSET_BIT(to, bit) (to &= ~(1 << bit))
+
+#define UNMASK_VALUE(from, start_bit, mask) ((from & mask) >> start_bit)
+#define SET_MASKED_VALUE(to, start_bit, mask, value) (to |= ((value << start_bit) & mask))
+#define RESET_REGISTER_WITH_MASK(to, start_bit, mask) (to &= ~((1 << start_bit) & mask))
 
 /* STM32F1XX CLOCK TREE */
 
@@ -942,42 +951,52 @@ static uint64_t stm32f1xx_rcc_read_word(Stm32F1xxRcc *self, hwaddr offset)
     {
         case STM32F1XX_RCC_CR_OFFSET:
         {
+            fprintf(stderr, "Reading CR: 0x%x\n", self->reg.RCC_CR);
             return self->reg.RCC_CR;
         } break;
         case STM32F1XX_RCC_CFGR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_CFGR: 0x%x\n", self->reg.RCC_CFGR);
             return self->reg.RCC_CFGR;
         } break;
         case STM32F1XX_RCC_CIR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_CIR: 0x%x\n", self->reg.RCC_CIR);
             return self->reg.RCC_CIR;
         } break;
         case STM32F1XX_RCC_APB2RSTR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_APB2RSTR: 0x%x\n", self->reg.RCC_APB2RSTR);
             return self->reg.RCC_APB2RSTR;
         } break;
         case STM32F1XX_RCC_APB1RSTR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_APB1RSTR: 0x%x\n", self->reg.RCC_APB1RSTR);
             return self->reg.RCC_APB1RSTR;
         } break;
         case STM32F1XX_RCC_AHBENR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_AHBENR: 0x%x\n", self->reg.RCC_AHBENR);
             return self->reg.RCC_AHBENR;
         } break;
         case STM32F1XX_RCC_APB2ENR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_APB2ENR: 0x%x\n", self->reg.RCC_APB2ENR);
             return self->reg.RCC_APB2ENR;
         } break;
         case STM32F1XX_RCC_APB1ENR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_APB1ENR: 0x%x\n", self->reg.RCC_APB1ENR);
             return self->reg.RCC_APB1ENR;
         } break;
         case STM32F1XX_RCC_BDCR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_BDCR: 0x%x\n", self->reg.RCC_BDCR);
             return self->reg.RCC_BDCR;
         } break;
         case STM32F1XX_RCC_CSR_OFFSET:
         {
+            fprintf(stderr, "Reading RCC_CSR: 0x%x\n", self->reg.RCC_CSR);
             return self->reg.RCC_CSR;
         } break;
     }
@@ -1003,13 +1022,137 @@ static void stm32f1xx_rcc_write_cr(Stm32F1xxRcc *self, uint64_t value)
 {
     fprintf(stderr, "Write to CR: 0x%lx\n", value);
 
-    if (value & STM32F1XX_HSION_BIT)
+    if (GET_BIT(value, STM32F1XX_HSION_BIT))
     {
         fprintf(stderr, "Enabling HSI \n");
-        self->reg.RCC_CR |= STM32F1XX_HSIRDY_BIT;
+        SET_BIT(self->reg.RCC_CR, STM32F1XX_HSION_BIT);
+        SET_BIT(self->reg.RCC_CR, STM32F1XX_HSIRDY_BIT);
+        SET_BIT(self->reg.RCC_CIR, STM32F1XX_HSIRDYF_BIT);
         // enable source clk
     }
+    if (value & STM32F1XX_HSITRIM_MASK)
+    {
+        fprintf(stderr, "Setting HSITRIM, unimp!\n");
+    }
+    if (GET_BIT(value, STM32F1XX_HSEON_BIT))
+    {
+        fprintf(stderr, "Enabling HSE \n");
+        SET_BIT(self->reg.RCC_CR, STM32F1XX_HSEON_BIT);
+        SET_BIT(self->reg.RCC_CR, STM32F1XX_HSERDY_BIT);
+        SET_BIT(self->reg.RCC_CIR, STM32F1XX_HSERDYF_BIT);
+    }
+    if (GET_BIT(value, STM32F1XX_HSEBYP_BIT))
+    {
+        fprintf(stderr, "Setting HSEBYP, unimp!\n");
+    }
+    if (GET_BIT(value, STM32F1XX_CSSON_BIT))
+    {
+        fprintf(stderr, "Setting CSSON, unimp!\n");
+    }
+    if (GET_BIT(value, STM32F1XX_PLLON_BIT))
+    {
+        fprintf(stderr, "Setting PLLON!\n");
+        SET_BIT(self->reg.RCC_CR, STM32F1XX_PLLREADY_BIT);
+
+    }
+    if (GET_BIT(value, STM32F1XX_PLL2ON_BIT))
+    {
+        fprintf(stderr, "Setting PLL2ON, unimp!\n");
+    }
+    if (GET_BIT(value, STM32F1XX_PLL3ON_BIT))
+    {
+        fprintf(stderr, "Setting PLL3ON, unimp!\n");
+    }
 }
+
+static void stm32f1xx_rcc_write_cfgr(Stm32F1xxRcc *self, uint64_t value)
+{
+    fprintf(stderr, "Write to CFGR: 0x%lx\n", value);
+
+    if (value & STM32F1XX_SW_MASK)
+    {
+        fprintf(stderr, "Setting system clock\n");
+        uint64_t source = UNMASK_VALUE(value, STM32F1XX_SW_START_BIT, STM32F1XX_SW_MASK);
+        switch (source)
+        {
+            case 0: {
+                fprintf(stderr, "Setting system clock to HSI\n");
+                RESET_REGISTER_WITH_MASK(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK, source);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SW_START_BIT, STM32F1XX_SW_MASK, source);
+            } break;
+            case 1: {
+                fprintf(stderr, "Setting system clock to HSE\n");
+                RESET_REGISTER_WITH_MASK(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK, source);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SW_START_BIT, STM32F1XX_SW_MASK, source);
+            } break;
+            case 2: {
+                fprintf(stderr, "Setting system clock to PLL\n");
+                RESET_REGISTER_WITH_MASK(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SWS_START_BIT, STM32F1XX_SWS_MASK, source);
+                SET_MASKED_VALUE(self->reg.RCC_CFGR, STM32F1XX_SW_START_BIT, STM32F1XX_SW_MASK, source);
+            } break;
+            case 3: {
+                fprintf(stderr, "Setting system clock to NotAllowed\n");
+
+            } break;
+        }
+
+    }
+
+    if (value & STM32F1XX_HPRE_MASK)
+    {
+        fprintf(stderr, "Setting HPRE, unimp!\n");
+
+    }
+
+    if (value & STM32F1XX_PPRE1_MASK)
+    {
+        self->reg.RCC_CFGR &= ~STM32F1XX_PPRE1_MASK;
+        self->reg.RCC_CFGR |= (value & STM32F1XX_PPRE1_MASK);
+    }
+
+    if (value & STM32F1XX_PPRE2_MASK)
+    {
+        fprintf(stderr, "Setting PPRE2, unimp!\n");
+
+    }
+
+    if (value & STM32F1XX_ADCPRE_MASK)
+    {
+        fprintf(stderr, "Setting ADCPRE, unimp!\n");
+
+    }
+    if (GET_BIT(value, STM32F1XX_PLLSRC_BIT))
+    {
+        fprintf(stderr, "Setting PLLSRC\n");
+        SET_BIT(self->reg.RCC_CFGR, STM32F1XX_PLLSRC_BIT);
+    }
+    if (GET_BIT(value, STM32F1XX_PLLXTPRE_BIT))
+    {
+        fprintf(stderr, "Setting PLLXTPRE, unimp!\n");
+
+    }
+    if (value & STM32F1XX_PLLMUL_MASK)
+    {
+        fprintf(stderr, "Setting PLLMUL\n");
+        self->reg.RCC_CFGR &= ~STM32F1XX_PLLMUL_MASK;
+        self->reg.RCC_CFGR |= (value & STM32F1XX_PLLMUL_MASK);
+
+    }
+    if (GET_BIT(value, STM32F1XX_OTGFSPRE_BIT))
+    {
+        fprintf(stderr, "Setting OTGFSPRE, unimp!\n");
+
+    }
+    if (value & STM32F1XX_MCO_MASK)
+    {
+        fprintf(stderr, "Setting MCO, unimp!\n");
+
+    }
+}
+
 
 static void stm32f1xx_rcc_write_word(Stm32F1xxRcc *self, hwaddr offset,
                        uint64_t value)
@@ -1022,7 +1165,7 @@ static void stm32f1xx_rcc_write_word(Stm32F1xxRcc *self, hwaddr offset,
         } break;
         case STM32F1XX_RCC_CFGR_OFFSET:
         {
-            fprintf(stderr, "Write to CFGR\n");
+            stm32f1xx_rcc_write_cfgr(self, value);
         } break;
         case STM32F1XX_RCC_CIR_OFFSET:
         {
