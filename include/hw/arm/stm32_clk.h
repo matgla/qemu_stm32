@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 
+#include "qemu/osdep.h" // qemu_irq
 #include "hw/irq.h"
 
 #define STM32_CLOCK_MAX_OBSERVERS 16
@@ -67,5 +68,12 @@ typedef struct Stm32Clock
     uint32_t number_of_observers;
     qemu_irq observers[STM32_CLOCK_MAX_OBSERVERS];
 } Stm32Clock;
+
+Stm32Clock* stm32_clock_get_output(Stm32Clock* self, const char* name);
+Stm32Clock* stm32_clock_get_input(Stm32Clock* self, const char* name);
+void stm32_clock_select_input(Stm32Clock* self, Stm32Clock* input);
+
+void stm32_clock_set_inputs(Stm32Clock* self, Stm32Clock** inputs, int number_of_inputs);
+void stm32_clock_set_outputs(Stm32Clock* self, Stm32Clock** outputs, int number_of_outputs);
 
 #endif
