@@ -243,11 +243,11 @@ static const Stm32Prescaler STM32F1XX_PRESCALE_NONE = {
     .divisor = 1
 };
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV1_5 {
-//     .name = "DIV1.5",
-//     .multiplier = 2,
-//     .divisor = 3
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV1_5 = {
+    .name = "DIV1.5",
+    .multiplier = 2,
+    .divisor = 3
+};
 
 static const Stm32Prescaler STM32F1XX_PRESCALE_DIV2 = {
     .name = "DIV2",
@@ -255,41 +255,41 @@ static const Stm32Prescaler STM32F1XX_PRESCALE_DIV2 = {
     .divisor = 2
 };
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV4 {
-//     .name = "DIV4",
-//     .multiplier = 1,
-//     .divisor = 4
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV4 = {
+    .name = "DIV4",
+    .multiplier = 1,
+    .divisor = 4
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV6 {
-//     .name = "DIV6",
-//     .multiplier = 1,
-//     .divisor = 6
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV6 = {
+    .name = "DIV6",
+    .multiplier = 1,
+    .divisor = 6
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV8 {
-//     .name = "DIV8",
-//     .multiplier = 1,
-//     .divisor = 8
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV8 = {
+    .name = "DIV8",
+    .multiplier = 1,
+    .divisor = 8
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV16 {
-//     .name = "DIV16",
-//     .multiplier = 1,
-//     .divisor = 16
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV16 = {
+    .name = "DIV16",
+    .multiplier = 1,
+    .divisor = 16
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV32 {
-//     .name = "DIV32",
-//     .multiplier = 1,
-//     .divisor = 32
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV32 = {
+    .name = "DIV32",
+    .multiplier = 1,
+    .divisor = 32
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV64 {
-//     .name = "DIV64",
-//     .multiplier = 1,
-//     .divisor = 64
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV64 = {
+    .name = "DIV64",
+    .multiplier = 1,
+    .divisor = 64
+};
 
 static const Stm32Prescaler STM32F1XX_PRESCALE_DIV128 = {
     .name = "DIV128",
@@ -297,115 +297,103 @@ static const Stm32Prescaler STM32F1XX_PRESCALE_DIV128 = {
     .divisor = 128
 };
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV256 {
-//     .name = "DIV256",
-//     .multiplier = 1,
-//     .divisor = 256
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV256 = {
+    .name = "DIV256",
+    .multiplier = 1,
+    .divisor = 256
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_DIV512 {
-//     .name = "DIV512",
-//     .multiplier = 1,
-//     .divisor = 512
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_DIV512 = {
+    .name = "DIV512",
+    .multiplier = 1,
+    .divisor = 512
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL2 {
-//     .name = "MUL2",
-//     .multiplier = 2,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL2 = {
+    .name = "MUL2",
+    .multiplier = 2,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL3 {
-//     .name = "MUL3",
-//     .multiplier = 3,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL3 = {
+    .name = "MUL3",
+    .multiplier = 3,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL4 {
-//     .name = "MUL4",
-//     .multiplier = 4,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL4 = {
+    .name = "MUL4",
+    .multiplier = 4,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL5 {
-//     .name = "MUL5",
-//     .multiplier = 5,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL5 = {
+    .name = "MUL5",
+    .multiplier = 5,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL5 {
-//     .name = "MUL5",
-//     .multiplier = 5,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL6 = {
+    .name = "MUL6",
+    .multiplier = 6,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL6 {
-//     .name = "MUL6",
-//     .multiplier = 6,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL7 = {
+    .name = "MUL7",
+    .multiplier = 7,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL7 {
-//     .name = "MUL7",
-//     .multiplier = 7,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL8 = {
+    .name = "MUL8",
+    .multiplier = 8,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL7 {
-//     .name = "MUL7",
-//     .multiplier = 7,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL9 = {
+    .name = "MUL9",
+    .multiplier = 9,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL8 {
-//     .name = "MUL8",
-//     .multiplier = 8,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL10 = {
+    .name = "MUL10",
+    .multiplier = 10,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL9 {
-//     .name = "MUL9",
-//     .multiplier = 9,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL11 = {
+    .name = "MUL11",
+    .multiplier = 11,
+    .divisor = 1
+};
 
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL10 {
-//     .name = "MUL10",
-//     .multiplier = 10,
-//     .divisor = 1
-// };
-
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL11 {
-//     .name = "MUL11",
-//     .multiplier = 11,
-//     .divisor = 1
-// };
-
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL12 {
-//     .name = "MUL12",
-//     .multiplier = 12,
-//     .divisor = 1
-// };
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL13 {
-//     .name = "MUL13",
-//     .multiplier = 13,
-//     .divisor = 1
-// };
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL14 {
-//     .name = "MUL14",
-//     .multiplier = 14,
-//     .divisor = 1
-// };
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL15 {
-//     .name = "MUL15",
-//     .multiplier = 15,
-//     .divisor = 1
-// };
-// static struct Stm32Prescaler STM32F1XX_PRESCALE_MUL16 {
-//     .name = "MUL16",
-//     .multiplier = 16,
-//     .divisor = 1
-// };
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL12 = {
+    .name = "MUL12",
+    .multiplier = 12,
+    .divisor = 1
+};
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL13 = {
+    .name = "MUL13",
+    .multiplier = 13,
+    .divisor = 1
+};
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL14 = {
+    .name = "MUL14",
+    .multiplier = 14,
+    .divisor = 1
+};
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL15 = {
+    .name = "MUL15",
+    .multiplier = 15,
+    .divisor = 1
+};
+static const Stm32Prescaler STM32F1XX_PRESCALE_MUL16 = {
+    .name = "MUL16",
+    .multiplier = 16,
+    .divisor = 1
+};
 
 static const Stm32Prescaler STM32F1XX_DEFAULT_PRESCALERS[] = {STM32F1XX_PRESCALE_NONE};
 
@@ -468,7 +456,7 @@ static const Stm32Prescaler STM32F1XX_DEFAULT_PRESCALERS[] = {STM32F1XX_PRESCALE
 // static struct Stm32Clock STM32F1XX_BKP_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "BKPCLK");
 // static struct Stm32Clock STM32F1XX_CAN_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "CANCLK");
 
-// static struct Stm32Clock STM32F1XX_USBCLK_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USBCLK");
+static Stm32Clock STM32F1XX_USBCLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "USBCLK");
 
 // static struct Stm32Clock STM32F1XX_I2C2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2C2CLK");
 // static struct Stm32Clock STM32F1XX_I2C1_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2C1CLK");
@@ -482,7 +470,7 @@ static const Stm32Prescaler STM32F1XX_DEFAULT_PRESCALERS[] = {STM32F1XX_PRESCALE
 // static struct Stm32Clock STM32F1XX_SPI2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SPI2CLK");
 // static Stm32Clock STM32F1XX_WWDG_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "WWDGCLK");
 static Stm32Clock STM32F1XX_IWDG_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "IWDGCLK");
-static Stm32Clock STM32F1XX_FLITFCLK_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "FLITFCLK");
+static Stm32Clock STM32F1XX_FLITFCLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "FLITFCLK");
 
 // static struct Stm32Clock STM32F1XX_TIM14_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM14CLK");
 // static struct Stm32Clock STM32F1XX_TIM13_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM13CLK");
@@ -494,11 +482,59 @@ static Stm32Clock STM32F1XX_FLITFCLK_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.n
 // static struct Stm32Clock STM32F1XX_TIM3_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM3CLK");
 // static struct Stm32Clock STM32F1XX_TIM2_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "TIM2CLK");
 
-static Stm32Clock STM32F1XX_RTC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "RTCCLK");
+static Stm32Clock STM32F1XX_I2S3 = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2S3CLK");
+static Stm32Clock STM32F1XX_I2S2 = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "I2S2CLK");
 
-// static struct Stm32Clock STM32F1XX_FLITFCLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "FLITFCLK");
 
-// static struct Stm32Prescaler STM32F1XX_USB_PRESCALERS[] = {STM32F1XX_PRESCALE_NONE, STM32F1XX_PRESCALE_DIV1_5};
+static Stm32Clock STM32F1XX_RTC_CLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "RTCCLK");
+static Stm32Clock STM32F1XX_SDIO_CLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SDIOCLK");
+static Stm32Clock STM32F1XX_FSMC_CLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "FSMCCLK");
+static Stm32Clock STM32F1XX_HCLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "HCLK");
+static Stm32Clock STM32F1XX_FCLK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "FCLK");
+static Stm32Clock STM32F1XX_CORTEX_SYSTIM = STM32_CLOCK_TREE_INITIALIZE_LAST(.name = "SYSTIM");
+
+static Stm32Prescaler STM32F1XX_USB_PRESCALERS[] = {STM32F1XX_PRESCALE_NONE, STM32F1XX_PRESCALE_DIV1_5};
+
+static Stm32Prescaler STM32F1XX_AHB_DIV8_PRESCALERS[] = {
+    STM32F1XX_PRESCALE_DIV8
+};
+
+static Stm32Clock* STM32F1XX_AHB_DIV8_OUTPUTS[] = {
+    &STM32F1XX_CORTEX_SYSTIM
+};
+
+static Stm32Clock STM32F1XX_AHB_DIV8 = {
+    .name = "AHB/8",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_AHB_DIV8_PRESCALERS),
+    .prescalers = STM32F1XX_AHB_DIV8_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_AHB_DIV8_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static Stm32Clock STM32F1XX_USB_PRESCALER = {
+    .name = "USB_PRESCALER",
+    .input_frequency = 0,
+    .output_frequency = 48000000,
+    .max_output_frequency = STM32_CLOCK_FREQUENCY_LIMIT,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_USB_PRESCALERS),
+    .prescalers = STM32F1XX_USB_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_USB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static Stm32Clock* STM32F1XX_USB_PRESCALER_OUTPUTS[] = {
+    &STM32F1XX_USBCLK
+};
+
 
 // static struct Stm32Clock* STM32F1XX_PCLK1_OUTPUTS[] = {
 
@@ -562,27 +598,27 @@ static Stm32Clock STM32F1XX_RTC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name =
 //     .number_of_observers = 0
 // };
 
-// static struct Stm32Prescaler STM32F1XX_APB_PRESCALERS[] = {
-//     STM32F1XX_PRESCALE_NONE,
-//     STM32F1XX_PRESCALE_DIV2,
-//     STM32F1XX_PRESCALE_DIV4,
-//     STM32F1XX_PRESCALE_DIV8,
-//     STM32F1XX_PRESCALE_DIV16
-// };
+static struct Stm32Prescaler STM32F1XX_APB_PRESCALERS[] = {
+    STM32F1XX_PRESCALE_NONE,
+    STM32F1XX_PRESCALE_DIV2,
+    STM32F1XX_PRESCALE_DIV4,
+    STM32F1XX_PRESCALE_DIV8,
+    STM32F1XX_PRESCALE_DIV16
+};
 
-// static struct Stm32Clock STM32F1XX_APB1 {
-//     .name = "APB1",
-//     .input_frequency = 0,
-//     .output_frequency = 0,
-//     .max_output_frequency = 36000000,
-//     .number_of_outputs = 0,
-//     .outputs = NULL,
-//     .number_of_prescalers = ARRAY_SIZE(STM32F1XX_APB_PRESCALERS),
-//     .prescalers = STM32F1XX_APB_PRESCALERS,
-//     .selected_prescaler = &STM32F1XX_APB_PRESCALERS[0],
-//     .enabled = false,
-//     .number_of_observers = 0
-// };
+static Stm32Clock STM32F1XX_APB1 = {
+    .name = "APB1",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 36000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_APB_PRESCALERS),
+    .prescalers = STM32F1XX_APB_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_APB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
 
 // static struct Stm32Prescaler STM32F1XX_TIM_PRESCALERS[] = {
 //     STM32F1XX_PRESCALE_NONE,
@@ -670,127 +706,172 @@ static Stm32Clock STM32F1XX_RTC_CLOCK = STM32_CLOCK_TREE_INITIALIZE_LAST(.name =
 //     .number_of_observers = 0
 // };
 
-// static struct Stm32Prescaler STM32F1XX_AHB_PRESCALERS[] = {
-//     STM32F1XX_PRESCALE_NONE,
-//     STM32F1XX_PRESCALE_DIV2,
-//     STM32F1XX_PRESCALE_DIV4,
-//     STM32F1XX_PRESCALE_DIV8,
-//     STM32F1XX_PRESCALE_DIV16,
-//     STM32F1XX_PRESCALE_DIV32,
-//     STM32F1XX_PRESCALE_DIV64,
-//     STM32F1XX_PRESCALE_DIV128,
-//     STM32F1XX_PRESCALE_DIV256,
-//     STM32F1XX_PRESCALE_DIV512
-// };
+static const Stm32Prescaler STM32F1XX_AHB_PRESCALERS[] = {
+    STM32F1XX_PRESCALE_NONE,
+    STM32F1XX_PRESCALE_DIV2,
+    STM32F1XX_PRESCALE_DIV4,
+    STM32F1XX_PRESCALE_DIV8,
+    STM32F1XX_PRESCALE_DIV16,
+    STM32F1XX_PRESCALE_DIV32,
+    STM32F1XX_PRESCALE_DIV64,
+    STM32F1XX_PRESCALE_DIV128,
+    STM32F1XX_PRESCALE_DIV256,
+    STM32F1XX_PRESCALE_DIV512
+};
 
-// static struct Stm32Clock* STM32F1XX_AHB_OUTPUTS[] = {
-//     &STM32F1XX_HCLK,
-//     &STM32F1XX_SYSTEM_TIMER_CLK,
-//     &STM32F1XX_APB1,
-//     &STM32F1XX_APB2,
-//     &STM32F1XX_HCLK_DIV2_PRESCALER
-// };
+static struct Stm32Clock* STM32F1XX_AHB_OUTPUTS[] = {
+    &STM32F1XX_SDIO_CLK,
+    &STM32F1XX_FSMC_CLK,
+    &STM32F1XX_HCLK,
+    &STM32F1XX_AHB_DIV8,
+    &STM32F1XX_FCLK,
+    &STM32F1XX_APB1,
+    &STM32F1XX_APB2,
+    &STM32F1XX_AHB_DIV2
+};
 
-// static struct Stm32Clock STM32F1XX_AHB {
-//     .name = "AHB",
-//     .input_frequency = 0,
-//     .output_frequency = 0,
-//     .max_output_frequency = 72000000,
-//     .number_of_outputs = ARRAY_SIZE(STM32F1XX_AHB_OUTPUTS),
-//     .outputs = STM32F1XX_AHB_OUTPUTS,
-//     .number_of_prescalers = ARRAY_SIZE(STM32F1XX_AHB_PRESCALERS),
-//     .prescalers = STM32F1XX_AHB_PRESCALERS,
-//     .selected_prescaler = &STM32F1XX_AHB_PRESCALERS[0],
-//     .enabled = false,
-//     .number_of_observers = 0
-// };
+static Stm32Clock STM32F1XX_AHB = {
+    .name = "AHB",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_AHB_PRESCALERS),
+    .prescalers = STM32F1XX_AHB_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_AHB_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
 
-// static const Stm32Prescaler STM32F1XX_PLLMUL_PRESCALERS[] = {
-//     STM32F1XX_PRESCALE_MUL2,
-//     STM32F1XX_PRESCALE_MUL3,
-//     STM32F1XX_PRESCALE_MUL4,
-//     STM32F1XX_PRESCALE_MUL5,
-//     STM32F1XX_PRESCALE_MUL6,
-//     STM32F1XX_PRESCALE_MUL7,
-//     STM32F1XX_PRESCALE_MUL8,
-//     STM32F1XX_PRESCALE_MUL9,
-//     STM32F1XX_PRESCALE_MUL10,
-//     STM32F1XX_PRESCALE_MUL11,
-//     STM32F1XX_PRESCALE_MUL12,
-//     STM32F1XX_PRESCALE_MUL13,
-//     STM32F1XX_PRESCALE_MUL14,
-//     STM32F1XX_PRESCALE_MUL15,
-//     STM32F1XX_PRESCALE_MUL16
-// };
+static const Stm32Prescaler STM32F1XX_PLLMUL_PRESCALERS[] = {
+    STM32F1XX_PRESCALE_MUL2,
+    STM32F1XX_PRESCALE_MUL3,
+    STM32F1XX_PRESCALE_MUL4,
+    STM32F1XX_PRESCALE_MUL5,
+    STM32F1XX_PRESCALE_MUL6,
+    STM32F1XX_PRESCALE_MUL7,
+    STM32F1XX_PRESCALE_MUL8,
+    STM32F1XX_PRESCALE_MUL9,
+    STM32F1XX_PRESCALE_MUL10,
+    STM32F1XX_PRESCALE_MUL11,
+    STM32F1XX_PRESCALE_MUL12,
+    STM32F1XX_PRESCALE_MUL13,
+    STM32F1XX_PRESCALE_MUL14,
+    STM32F1XX_PRESCALE_MUL15,
+    STM32F1XX_PRESCALE_MUL16
+};
 
-// static struct Stm32Clock STM32F1XX_PLLMUL {
-//     .name = "PLLMUL",
-//     .input_frequency = 0,
-//     .output_frequency = 0,
-//     .max_output_frequency = 72000000,
-//     .number_of_outputs = 0,
-//     .outputs = NULL,
-//     .number_of_prescalers = ARRAY_SIZE(STM32F1XX_PLLMUL_PRESCALERS),
-//     .prescalers = STM32F1XX_PLLMUL_PRESCALERS,
-//     .selected_prescaler = &STM32F1XX_PLLMUL_PRESCALERS[0],
-//     .enabled = false,
-//     .number_of_observers = 0
-// };
+static Stm32Clock* STM32F1XX_SYSCLK_OUTPUTS[] = {
+    &STM32F1XX_I2S2,
+    &STM32F1XX_I2S3,
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock STM32F1XX_SYSCLK = {
+    .name = "SYSCLK",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = ARRAY_SIZE(STM32F1XX_SYSCLK_OUTPUTS),
+    .outputs = STM32F1XX_SYSCLK_OUTPUTS,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
+    .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static Stm32Clock* STM32F1XX_CSS_OUTPUTS[] = {
+    &STM32F1XX_SYSCLK
+};
+
+static Stm32Clock STM32F1XX_CSS = {
+    .name = "CSS",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
+    .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
 
 
-// static Stm32Clock* STM32F1XX_PLLSRC_OUTPUTS[] = {
-//     &STM32F1XX_PLLMUL
-// };
+static struct Stm32Clock STM32F1XX_PLLMUL = {
+    .name = "PLLMUL",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_PLLMUL_PRESCALERS),
+    .prescalers = STM32F1XX_PLLMUL_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_PLLMUL_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
+
+static Stm32Clock* STM32F1XX_PLLMUL_OUTPUTS[] = {
+    &STM32F1XX_SYSCLK,
+    &STM32F1XX_USB_PRESCALER
+};
 
 
-// static Stm32Clock STM32F1XX_PLLSRC = {
-//     .name = "PLL",
-//     .input_frequency = 0,
-//     .output_frequency = 0,
-//     .max_output_frequency = 72000000,
-//     .number_of_outputs = 0,
-//     .outputs = NULL,
-//     .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
-//     .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
-//     .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
-//     .enabled = false,
-//     .number_of_observers = 0
-// };
+static Stm32Clock* STM32F1XX_PLLSRC_OUTPUTS[] = {
+    &STM32F1XX_PLLMUL
+};
+
+
+static Stm32Clock STM32F1XX_PLLSRC = {
+    .name = "PLLSRC",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 72000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
+    .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
 
 /////////////////////////////////////////////////////
 //                         SOURCES
 ////////////////////////////////////////////////////
-// static Stm32Clock* STM32F1XX_LSE_OUTPUTS[] = {
-//     &STM32F1XX_RTC_CLOCK
-// };
+static Stm32Clock* STM32F1XX_LSE_OUTPUTS[] = {
+    &STM32F1XX_RTC_CLK
+};
 
-// static Stm32Clock STM32F1XX_LSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
-//     .name = "LSE",
-//     .output_frequency = 32768,
-//     STM32F1XX_LSE_OUTPUTS
-// );
+static Stm32Clock STM32F1XX_LSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "LSE",
+    .output_frequency = 32768,
+    STM32F1XX_LSE_OUTPUTS
+);
 
-// static Stm32Prescaler STM32F1XX_HSI_DIV2_PRESCALERS[] = {
-//     STM32F1XX_PRESCALE_DIV2
-// };
+static Stm32Prescaler STM32F1XX_HSI_DIV2_PRESCALERS[] = {
+    STM32F1XX_PRESCALE_DIV2
+};
 
-// static Stm32Clock* STM32F1XX_HSI_DIV2_OUTPUTS[] = {
-//     &STM32F1XX_PLLSRC
-// }
+static Stm32Clock* STM32F1XX_HSI_DIV2_OUTPUTS[] = {
+    &STM32F1XX_PLLSRC
+};
 
-// static Stm32Clock STM32F1XX_HSI_DIV2 = {
-//     .name = "HSI/2",
-//     .input_frequency = 0,
-//     .output_frequency = 0,
-//     .max_output_frequency = 4000000,
-//     .number_of_outputs = 0,
-//     .outputs = NULL,
-//     .number_of_prescalers = ARRAY_SIZE(STM32F1XX_HSI_DIV2_PRESCALERS),
-//     .prescalers = STM32F1XX_HSI_DIV2_PRESCALERS,
-//     .selected_prescaler = &STM32F1XX_HSI_DIV2_PRESCALERS[0],
-//     .enabled = false,
-//     .number_of_observers = 0
-// };
+static Stm32Clock STM32F1XX_HSI_DIV2 = {
+    .name = "HSI/2",
+    .input_frequency = 0,
+    .output_frequency = 0,
+    .max_output_frequency = 4000000,
+    .number_of_outputs = 0,
+    .outputs = NULL,
+    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_HSI_DIV2_PRESCALERS),
+    .prescalers = STM32F1XX_HSI_DIV2_PRESCALERS,
+    .selected_prescaler = &STM32F1XX_HSI_DIV2_PRESCALERS[0],
+    .enabled = false,
+    .number_of_observers = 0
+};
 
 static Stm32Prescaler STM32F1XX_HSE_DIV2_PRESCALERS[] = {
     STM32F1XX_PRESCALE_DIV2
@@ -851,47 +932,9 @@ static Stm32Clock STM32F1XX_PLLXTPRE = {
 };
 
 static Stm32Clock* STM32F1XX_PLLXTPRE_OUTPUTS[] = {
+    &STM32F1XX_PLLSRC
 };
 
-
-static Stm32Clock* STM32F1XX_SYSCLK_OUTPUTS[] = {
-
-};
-
-static Stm32Clock STM32F1XX_SYSCLK = {
-    .name = "SYSCLK",
-    .input_frequency = 0,
-    .output_frequency = 0,
-    .max_output_frequency = 72000000,
-    .number_of_outputs = ARRAY_SIZE(STM32F1XX_SYSCLK_OUTPUTS),
-    .outputs = STM32F1XX_SYSCLK_OUTPUTS,
-    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
-    .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
-    .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
-    .enabled = false,
-    .number_of_observers = 0
-};
-
-static Stm32Clock* STM32F1XX_CSS_OUTPUTS[] = {
-
-};
-
-
-
-
-static Stm32Clock STM32F1XX_CSS = {
-    .name = "CSS",
-    .input_frequency = 0,
-    .output_frequency = 0,
-    .max_output_frequency = 72000000,
-    .number_of_outputs = 0,
-    .outputs = NULL,
-    .number_of_prescalers = ARRAY_SIZE(STM32F1XX_DEFAULT_PRESCALERS),
-    .prescalers = STM32F1XX_DEFAULT_PRESCALERS,
-    .selected_prescaler = &STM32F1XX_DEFAULT_PRESCALERS[0],
-    .enabled = false,
-    .number_of_observers = 0
-};
 
 static Stm32Clock* STM32F1XX_HSE_OUTPUTS[] = {
     &STM32F1XX_SYSCLK,
@@ -907,28 +950,28 @@ static Stm32Clock STM32F1XX_HSE = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
     STM32F1XX_HSE_OUTPUTS
 );
 
-// static Stm32Clock* STM32F1XX_HSI_OUTPUTS[] = {
-//     &STM32F1XX_SYSCLK,
-//     &STM32F1XX_HSI_DIV2,
-//     &STM32F1XX_FLITFCLK_CLOCK
-// };
+static Stm32Clock* STM32F1XX_HSI_OUTPUTS[] = {
+    &STM32F1XX_SYSCLK,
+    &STM32F1XX_HSI_DIV2,
+    &STM32F1XX_FLITFCLK
+};
 
-// static Stm32Clock STM32F1XX_HSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
-//     .name = "HSI",
-//     .output_frequency = 8000000,
-//     STM32F1XX_HSI_OUTPUTS
-// );
+static Stm32Clock STM32F1XX_HSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "HSI",
+    .output_frequency = 8000000,
+    STM32F1XX_HSI_OUTPUTS
+);
 
-// static Stm32Clock* STM32F1XX_LSI_OUTPUTS[] = {
-//     &STM32F1XX_RTC_CLOCK,
-//     &STM32F1XX_IWDG_CLOCK
-// };
+static Stm32Clock* STM32F1XX_LSI_OUTPUTS[] = {
+    &STM32F1XX_RTC_CLK,
+    &STM32F1XX_IWDG_CLOCK
+};
 
-// static Stm32Clock STM32F1XX_LSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
-//     .name = "LSI",
-//     .output_frequency = 40000,
-//     STM32F1XX_LSI_OUTPUTS
-// );
+static Stm32Clock STM32F1XX_LSI = STM32_CLOCK_TREE_INITIALIZE_SOURCE(
+    .name = "LSI",
+    .output_frequency = 40000,
+    STM32F1XX_LSI_OUTPUTS
+);
 
 static Stm32Clock* STM32F1XX_CSS_INPUTS[] = {
     &STM32F1XX_HSE
@@ -950,6 +993,73 @@ static Stm32Clock* STM32F1XX_SYSCLK_INPUTS[] = {
 
 static Stm32Clock* STM32F1XX_HSE_DIV128_INPUTS[] = {
     &STM32F1XX_HSE
+};
+
+static Stm32Clock* STM32F1XX_FLITFCLK_INPUTS[] = {
+    &STM32F1XX_HSI
+};
+
+static Stm32Clock* STM32F1XX_HSI_DIV2_INPUTS[] = {
+    &STM32F1XX_HSI
+};
+
+static Stm32Clock* STM32F1XX_RTC_INPUTS[] = {
+    &STM32F1XX_HSE_DIV128,
+    &STM32F1XX_LSE,
+    &STM32F1XX_LSI
+};
+
+static Stm32Clock* STM32F1XX_IWDG_INPUTS[] = {
+    &STM32F1XX_LSI
+};
+
+static Stm32Clock* STM32F1XX_PLLSRC_INPUTS[] = {
+    &STM32F1XX_PLLSRC
+};
+
+static Stm32Clock* STM32F1XX_PLLMUL_INPUTS[] = {
+    &STM32F1XX_HSE_DIV2,
+    &STM32F1XX_PLLXTPRE
+};
+
+static Stm32Clock* STM32F1XX_USB_PRESCALER_INPUTS[] = {
+    &STM32F1XX_PLLMUL
+};
+
+static Stm32Clock* STM32F1XX_I2S3_INPUTS[] = {
+    &STM32F1XX_SYSCLK
+};
+
+static Stm32Clock* STM32F1XX_I2S2_INPUTS[] = {
+    &STM32F1XX_SYSCLK
+};
+
+static Stm32Clock* STM32F1XX_AHB_INPUTS[] = {
+    &STM32F1XX_SYSCLK
+};
+
+static Stm32Clock* STM32F1XX_SDIO_INPUTS[] = {
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock* STM32F1XX_FSMC_INPUTS[] = {
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock* STM32F1XX_HCLK_INPUTS[] = {
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock* STM32F1XX_FCLK_INPUTS[] = {
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock* STM32F1XX_AHB_DIV8_INPUTS[] = {
+    &STM32F1XX_AHB
+};
+
+static Stm32Clock* STM32F1XX_SYSTIM_INPUTS[] = {
+    &STM32F1XX_AHB
 };
 
 typedef struct Stm32F1xxRccRegisters
@@ -982,25 +1092,21 @@ typedef struct Stm32F1xxRcc
     qemu_irq irq;
 } Stm32F1xxRcc;
 
-
-
-static void stm32f1xx_initialize_hse_tree(Stm32Clock* hse)
+static void stm32f1xx_initialize_tree(Stm32Clock* hse, Stm32Clock* hsi, Stm32Clock* lse, Stm32Clock* lsi)
 {
+    /* HSE configuration */
     stm32_clock_set_outputs(hse, STM32F1XX_HSE_OUTPUTS, ARRAY_SIZE(STM32F1XX_HSE_OUTPUTS));
 
     Stm32Clock* css = stm32_clock_get_output(hse, "CSS");
     stm32_clock_set_inputs(css, STM32F1XX_CSS_INPUTS, ARRAY_SIZE(STM32F1XX_CSS_INPUTS));
-    stm32_clock_select_input(css, hse);
     stm32_clock_set_outputs(css, STM32F1XX_CSS_OUTPUTS, ARRAY_SIZE(STM32F1XX_CSS_OUTPUTS));
 
     Stm32Clock* pllxtpre = stm32_clock_get_output(hse, "PLLXTPRE");
     stm32_clock_set_inputs(pllxtpre, STM32F1XX_PLLXTPRE_INPUTS, ARRAY_SIZE(STM32F1XX_PLLXTPRE_INPUTS));
-    stm32_clock_select_input(pllxtpre, hse);
     stm32_clock_set_outputs(pllxtpre, STM32F1XX_PLLXTPRE_OUTPUTS, ARRAY_SIZE(STM32F1XX_PLLXTPRE_OUTPUTS));
 
     Stm32Clock* hse_div2 = stm32_clock_get_output(hse, "HSE/2");
     stm32_clock_set_inputs(hse_div2, STM32F1XX_HSE_DIV2_INPUTS, ARRAY_SIZE(STM32F1XX_HSE_DIV2_INPUTS));
-    stm32_clock_select_input(hse_div2, hse);
     stm32_clock_set_outputs(hse_div2, STM32F1XX_HSE_DIV2_OUTPUTS, ARRAY_SIZE(STM32F1XX_HSE_DIV2_OUTPUTS));
 
     Stm32Clock* sysclk = stm32_clock_get_output(hse, "SYSCLK");
@@ -1009,9 +1115,74 @@ static void stm32f1xx_initialize_hse_tree(Stm32Clock* hse)
 
     Stm32Clock* hse_div128 = stm32_clock_get_output(hse, "HSE/128");
     stm32_clock_set_inputs(hse_div128, STM32F1XX_HSE_DIV128_INPUTS, ARRAY_SIZE(STM32F1XX_HSE_DIV128_INPUTS));
-    stm32_clock_select_input(hse_div128, hse);
     stm32_clock_set_outputs(hse_div128, STM32F1XX_HSE_DIV128_OUTPUTS, ARRAY_SIZE(STM32F1XX_HSE_DIV128_OUTPUTS));
+
+    Stm32Clock* pllsrc = stm32_clock_get_output(pllxtpre, "PLLSRC");
+    stm32_clock_set_inputs(pllsrc, STM32F1XX_PLLSRC_INPUTS, ARRAY_SIZE(STM32F1XX_PLLSRC_INPUTS));
+    stm32_clock_set_outputs(pllsrc, STM32F1XX_PLLSRC_OUTPUTS, ARRAY_SIZE(STM32F1XX_PLLSRC_OUTPUTS));
+
+    Stm32Clock* pllmul = stm32_clock_get_output(pllsrc, "PLLMUL");
+    stm32_clock_set_inputs(pllmul, STM32F1XX_PLLMUL_INPUTS, ARRAY_SIZE(STM32F1XX_PLLMUL_INPUTS));
+    stm32_clock_set_outputs(pllmul, STM32F1XX_PLLMUL_OUTPUTS, ARRAY_SIZE(STM32F1XX_PLLMUL_OUTPUTS));
+
+    Stm32Clock* usb = stm32_clock_get_output(pllmul, "USB_PRESCALER");
+    stm32_clock_set_inputs(usb, STM32F1XX_USB_PRESCALER_INPUTS, ARRAY_SIZE(STM32F1XX_USB_PRESCALER_INPUTS));
+    stm32_clock_set_outputs(usb, STM32F1XX_USB_PRESCALER_OUTPUTS, ARRAY_SIZE(STM32F1XX_USB_PRESCALER_OUTPUTS));
+    /* HSI configuration */
+    stm32_clock_set_outputs(hsi, STM32F1XX_HSI_OUTPUTS, ARRAY_SIZE(STM32F1XX_HSI_OUTPUTS));
+
+    Stm32Clock* flitfclk = stm32_clock_get_output(hsi, "FLITFCLK");
+    stm32_clock_set_inputs(flitfclk, STM32F1XX_FLITFCLK_INPUTS, ARRAY_SIZE(STM32F1XX_FLITFCLK_INPUTS));
+
+    Stm32Clock* hsi_div2 = stm32_clock_get_output(hsi, "HSI/2");
+    stm32_clock_set_inputs(hsi_div2, STM32F1XX_HSI_DIV2_INPUTS, ARRAY_SIZE(STM32F1XX_HSI_DIV2_INPUTS));
+    stm32_clock_set_outputs(hsi_div2, STM32F1XX_HSI_DIV2_OUTPUTS, ARRAY_SIZE(STM32F1XX_HSI_DIV2_OUTPUTS));
+
+    /* LSE configuration */
+    stm32_clock_set_outputs(lse, STM32F1XX_LSE_OUTPUTS, ARRAY_SIZE(STM32F1XX_LSE_OUTPUTS));
+
+    Stm32Clock* rtc = stm32_clock_get_output(lse, "RTCCLK");
+    stm32_clock_set_inputs(rtc, STM32F1XX_RTC_INPUTS, ARRAY_SIZE(STM32F1XX_RTC_INPUTS));
+
+    /* LSI configuration */
+    stm32_clock_set_outputs(lsi, STM32F1XX_LSI_OUTPUTS, ARRAY_SIZE(STM32F1XX_LSI_OUTPUTS));
+
+    Stm32Clock* iwdg = stm32_clock_get_output(lsi, "IWDGCLK");
+    stm32_clock_set_inputs(iwdg, STM32F1XX_IWDG_INPUTS, ARRAY_SIZE(STM32F1XX_IWDG_INPUTS));
+
+    /* SYSCLK */
+    Stm32Clock* i2s3 = stm32_clock_get_output(sysclk, "I2S3CLK");
+    stm32_clock_set_inputs(i2s3, STM32F1XX_I2S3_INPUTS, ARRAY_SIZE(STM32F1XX_I2S3_INPUTS));
+
+    Stm32Clock* i2s2 = stm32_clock_get_output(sysclk, "I2S2CLK");
+    stm32_clock_set_inputs(i2s2, STM32F1XX_I2S2_INPUTS, ARRAY_SIZE(STM32F1XX_I2S2_INPUTS));
+
+    Stm32Clock* ahb = stm32_clock_get_output(sysclk, "AHB");
+    stm32_clock_set_inputs(ahb, STM32F1XX_AHB_INPUTS, ARRAY_SIZE(STM32F1XX_AHB_INPUTS));
+    stm32_clock_set_outputs(ahb, STM32F1XX_AHB_OUTPUTS, ARRAY_SIZE(STM32F1XX_AHB_OUTPUTS));
+
+    Stm32Clock* sdio = stm32_clock_get_output(ahb, "SDIOCLK");
+    stm32_clock_set_inputs(sdio, STM32F1XX_SDIO_INPUTS, ARRAY_SIZE(STM32F1XX_SDIO_INPUTS));
+
+    Stm32Clock* fsmc = stm32_clock_get_output(ahb, "FSMCCLK");
+    stm32_clock_set_inputs(fsmc, STM32F1XX_FSMC_INPUTS, ARRAY_SIZE(STM32F1XX_FSMC_INPUTS));
+
+    Stm32Clock* ahb_div8 = stm32_clock_get_output(ahb, "AHB/8");
+    stm32_clock_set_inputs(ahb_div8, STM32F1XX_AHB_DIV8_INPUTS, ARRAY_SIZE(STM32F1XX_AHB_DIV8_INPUTS));
+    stm32_clock_set_outputs(ahb_div8, STM32F1XX_AHB_DIV8_OUTPUTS, ARRAY_SIZE(STM32F1XX_AHB_DIV8_OUTPUTS));
+
+    Stm32Clock* systim = stm32_clock_get_output(ahb_div8, "SYSTIM");
+    stm32_clock_set_inputs(systim, STM32F1XX_SYSTIM_INPUTS, ARRAY_SIZE(STM32F1XX_SYSTIM_INPUTS));
+
+    Stm32Clock* fclk = stm32_clock_get_output(ahb, "FCLK");
+    stm32_clock_set_inputs(fclk, STM32F1XX_FCLK_INPUTS, ARRAY_SIZE(STM32F1XX_FCLK_INPUTS));
+
+    Stm32Clock* hclk = stm32_clock_get_output(ahb, "HCLK");
+    stm32_clock_set_inputs(hclk, STM32F1XX_HCLK_INPUTS, ARRAY_SIZE(STM32F1XX_HCLK_INPUTS));
+
+
 }
+
 
 static void stm32f1xx_rcc_reset_registers(Stm32F1xxRccRegisters *self)
 {
@@ -1030,7 +1201,7 @@ static void stm32f1xx_rcc_reset_registers(Stm32F1xxRccRegisters *self)
 static void stm32f1xx_rcc_init_clock_tree(Stm32F1xxRcc* self)
 {
     self->hse = &STM32F1XX_HSE;
-    stm32f1xx_initialize_hse_tree(self->hse);
+    stm32f1xx_initialize_tree(self->hse, self->hsi, self->lse, self->lsi);
     // self->hsi = &STM32F1XX_HSI;
     // self->lse = &STM32F1XX_LSE;
     // self->lsi = &STM32F1XX_LSI;

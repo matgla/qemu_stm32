@@ -63,7 +63,8 @@ typedef struct Stm32Clock
     const Stm32Prescaler *selected_prescaler;
 
     /* state */
-    int enabled;
+    bool enabled;
+    bool initialized;
 
     uint32_t number_of_observers;
     qemu_irq observers[STM32_CLOCK_MAX_OBSERVERS];
@@ -76,4 +77,8 @@ void stm32_clock_select_input(Stm32Clock* self, Stm32Clock* input);
 void stm32_clock_set_inputs(Stm32Clock* self, Stm32Clock** inputs, int number_of_inputs);
 void stm32_clock_set_outputs(Stm32Clock* self, Stm32Clock** outputs, int number_of_outputs);
 
+bool stm32_clock_is_initialized(Stm32Clock* self);
+void stm32_clock_set_initialized(Stm32Clock* self);
+
 #endif
+

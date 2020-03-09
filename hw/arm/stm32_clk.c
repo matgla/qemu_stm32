@@ -88,6 +88,15 @@ void stm32_clock_set_outputs(Stm32Clock* self, Stm32Clock** outputs, int number_
     self->outputs = outputs;
 }
 
+bool stm32_clock_is_initialized(Stm32Clock* self)
+{
+    return self->initialized;
+}
+
+void stm32_clock_set_initialized(Stm32Clock* self)
+{
+    self->initialized = true;
+}
 
 // #include <stdlib.h>
 // #include <stdint.h>
