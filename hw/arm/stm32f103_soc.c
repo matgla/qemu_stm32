@@ -33,9 +33,8 @@
 #include "hw/arm/stm32f1xx_rcc.h"
 
 #define SYSCFG_ADD 0x40013800
-static const uint32_t usart_addr[] = {0x40011000, 0x40004400, 0x40004800,
-                                      0x40004C00, 0x40005000, 0x40011400,
-                                      0x40007800, 0x40007C00};
+static const uint32_t usart_addr[] = {0x40013800, 0x40004400, 0x40004800,
+                                      0x40004C00, 0x40005000 };
 
 static const uint32_t timer_addr[] = {0x40000000, 0x40000400,
                                       0x40000800, 0x40000C00};
@@ -60,11 +59,11 @@ static void stm32f103c8_soc_initfn(Object *obj)
     sysbus_init_child_obj(obj, "armv7m", &s->armv7m, sizeof(s->armv7m), TYPE_ARMV7M);
     sysbus_init_child_obj(obj, "syscfg", &s->syscfg, sizeof(s->syscfg), TYPE_STM32F2XX_SYSCFG);
 
-    // for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
-    // {
-    //     sysbus_init_child_obj(obj, "usart[*]", &s->usart[i],
-    //                           sizeof(s->usart[i]), TYPE_STM32F2XX_USART);
-    // }
+    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
+    {
+        sysbus_init_child_obj(obj, "usart[*]", &s->usart[i],
+                              sizeof(s->usart[i]), TYPE_STM32F2XX_USART);
+    }
 
     // for (i = 0; i < STM32F103C8_NUM_TIMERS; i++) {
     //     sysbus_init_child_obj(obj, "timer[*]", &s->timer[i],
@@ -86,6 +85,8 @@ static void stm32f103c8_soc_initfn(Object *obj)
 
 static Property stm32f103c8_soc_properties[] = {
     DEFINE_PROP_STRING("cpu-type", STM32F103C8State, cpu_type),
+    DEFINE_PROP_UINT32("hse-frequency", STM32F103C8State, hse_frequency, 0),
+    DEFINE_PROP_UINT32("lse-frequency", STM32F103C8State, lse_frequency, 0),
     DEFINE_PROP_END_OF_LIST(),
 };
 
@@ -153,8 +154,10 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
 
     /* RCC */
     DeviceState *rcc_device = qdev_create(NULL, TYPE_STM32F1XX_RCC);
+    qdev_prop_set_uint32(rcc_device, "hse-frequency", s->hse_frequency);
+    qdev_prop_set_uint32(rcc_device, "lse-frequency", s->lse_frequency);
     qdev_init_nofail(rcc_device);
-    fprintf(stderr, "RCC initialized\n");
+    fprintf(stderr, "RCC initialized, hse: %u, lse: %u\n", s->hse_frequency, s->lse_frequency);
     sysbus_mmio_map(SYS_BUS_DEVICE(rcc_device), 0, 0x40021000);
     // qdev_get_
     // sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, RCC_IRQ));
@@ -162,20 +165,20 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     // object_property_add_child()
 
     // /* attach UART and USART */
-    // for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
-    // {
-    //     dev = DEVICE(&(s->usart[i]));
-    //     qdev_prop_set_chr(dev, "chardev", serial_hd(i));
-    //     object_property_set_bool(OBJECT(&s->usart[i]), true, "realized", &err);
-    //     if (err != NULL)
-    //     {
-    //         error_propagate(errp, err);
-    //         return;
-    //     }
-    //     busdev = SYS_BUS_DEVICE(dev);
-    //     sysbus_mmio_map(busdev, 0, usart_addr[i]);
-    //     sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, usart_irq[i]));
-    // }
+    for (i = 0; i < STM32F103C8_NUM_USARTS; ++i)
+    {
+        dev = DEVICE(&(s->usart[i]));
+        qdev_prop_set_chr(dev, "chardev", serial_hd(i));
+        object_property_set_bool(OBJECT(&s->usart[i]), true, "realized", &err);
+        if (err != NULL)
+        {
+            error_propagate(errp, err);
+            return;
+        }
+        busdev = SYS_BUS_DEVICE(dev);
+        sysbus_mmio_map(busdev, 0, usart_addr[i]);
+        sysbus_connect_irq(busdev, 0, qdev_get_gpio_in(armv7m, usart_irq[i]));
+    }
 
     // /* Timer 2 to 5 */
     // for (i = 0; i < STM32F103C8_NUM_TIMERS; i++)
@@ -239,7 +242,6 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     create_unimplemented_device("Ethernet",                 0x40028000, 0x1FFF);
     create_unimplemented_device("CRC",                      0x40023000, 0x3FF);
     create_unimplemented_device("Flash memory interface",   0x40022000, 0x3FF);
-    // create_unimplemented_device("RCC",                      0x40021000, 0x3FF);
     create_unimplemented_device("DMA2",                     0x40020400, 0x3FF);
     create_unimplemented_device("DMA1",                     0x40020000, 0x3FF);
     create_unimplemented_device("SDIO",                     0x40018000, 0x3FF);
@@ -247,7 +249,7 @@ static void stm32f103c8_soc_realize(DeviceState *dev_soc, Error **errp)
     create_unimplemented_device("TIM10",                    0x40015000, 0x3FF);
     create_unimplemented_device("TIM9",                     0x40014C00, 0x3FF);
     create_unimplemented_device("ADC3",                     0x40013C00, 0x3FF);
-    create_unimplemented_device("USART1",                   0x40013800, 0x3FF);
+    // create_unimplemented_device("USART1",                   0x40013800, 0x3FF);
     create_unimplemented_device("TIM8",                     0x40013400, 0x3FF);
     create_unimplemented_device("SPI1",                     0x40013000, 0x3FF);
     create_unimplemented_device("TIM1",                     0x40012C00, 0x3FF);

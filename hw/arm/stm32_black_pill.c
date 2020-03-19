@@ -37,10 +37,13 @@ static void stm32_black_pill_init(MachineState *machine)
 
     dev = qdev_create(NULL, TYPE_STM32F103C8_SOC);
     qdev_prop_set_string(dev, "cpu-type", ARM_CPU_TYPE_NAME("cortex-m3"));
+    qdev_prop_set_uint32(dev, "hse-frequency", 8000000);
+    qdev_prop_set_uint32(dev, "lse-frequency", 32748);
     object_property_set_bool(OBJECT(dev), true, "realized", &error_fatal);
 
-    armv7m_load_kernel(ARM_CPU(first_cpu), machine->kernel_filename, 
-            STM32F103C8_FLASH_SIZE);
+    armv7m_load_kernel(ARM_CPU(first_cpu),
+                       machine->kernel_filename,
+                       STM32F103C8_FLASH_SIZE);
 }
 
 static void stm32_black_pill_machine_init(MachineClass *mc)

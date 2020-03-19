@@ -49,8 +49,8 @@
 #define STM32F103C8_NUM_ADC 2
 #define STM32F103C8_NUM_SPI 2
 
-#define STM32F103C8_FLASH_SIZE (1024 * 64)
-#define STM32F103C8_SRAM_SIZE (1024 * 20)
+#define STM32F103C8_FLASH_SIZE (1024 * 1024)
+#define STM32F103C8_SRAM_SIZE (1024 * 128)
 
 typedef struct STM32F103C8State {
     /*< private >*/
@@ -71,6 +71,9 @@ typedef struct STM32F103C8State {
     MemoryRegion sram;
     MemoryRegion flash;
     MemoryRegion flash_alias;
+
+    uint32_t hse_frequency;
+    uint32_t lse_frequency;
 } STM32F103C8State;
 
 #endif

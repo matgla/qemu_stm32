@@ -73,12 +73,15 @@ typedef struct Stm32Clock
 Stm32Clock* stm32_clock_get_output(Stm32Clock* self, const char* name);
 Stm32Clock* stm32_clock_get_input(Stm32Clock* self, const char* name);
 void stm32_clock_select_input(Stm32Clock* self, Stm32Clock* input);
+Stm32Clock* stm32_clock_get_descendant(Stm32Clock* self, const char* name);
 
 void stm32_clock_set_inputs(Stm32Clock* self, Stm32Clock** inputs, int number_of_inputs);
 void stm32_clock_set_outputs(Stm32Clock* self, Stm32Clock** outputs, int number_of_outputs);
 
 bool stm32_clock_is_initialized(Stm32Clock* self);
 void stm32_clock_set_initialized(Stm32Clock* self);
+
+void stm32_clock_update_clocks(Stm32Clock* self);
 
 #endif
 

@@ -59,6 +59,8 @@ static void systick_reload(SysTickState *s, int reset)
     timer_mod(s->timer, s->tick);
 }
 
+static int i = 0;
+
 static void systick_timer_tick(void *opaque)
 {
     SysTickState *s = (SysTickState *)opaque;
@@ -177,6 +179,7 @@ static MemTxResult systick_write(void *opaque, hwaddr addr,
         break;
     }
     case 0x4: /* SysTick Reload Value.  */
+        fprintf(stderr, "Setting reload to: %d\n", value);
         s->reload = value;
         break;
     case 0x8: /* SysTick Current Value.  Writes reload the timer.  */
